@@ -89,6 +89,9 @@ dependencies {
     implementation("io.github.raamcosta.compose-destinations:animations-core:1.8.42-beta")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.8.42-beta")
 
+    // Navigation bottom bar
+    implementation("androidx.compose.material:material:1.5.4")
+
     // DataStore
     implementation("androidx.datastore:datastore-core:1.0.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
@@ -109,4 +112,7 @@ dependencies {
 
     // ML Kit Translation
     implementation("com.google.mlkit:translate:17.0.1")
+
+    // Pager
+    implementation("androidx.compose.foundation:foundation:1.6.0-alpha07")
 }
