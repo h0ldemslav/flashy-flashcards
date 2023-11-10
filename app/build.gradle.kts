@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -7,6 +9,8 @@ plugins {
     // Navigation using: https://github.com/raamcosta/compose-destinations
     id("com.google.devtools.ksp") version "1.8.10-1.0.9"
 }
+
+val apiKey: String = gradleLocalProperties(rootDir).getProperty("API_KEY")
 
 android {
     namespace = "cz.mendelu.pef.flashyflashcards"
@@ -34,6 +38,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+        getByName("debug") {
+            buildConfigField("String", "API_KEY", apiKey)
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -44,6 +52,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.4"
