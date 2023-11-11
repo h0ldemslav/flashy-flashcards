@@ -10,6 +10,6 @@ interface YelpAPI {
     @GET("businesses/search")
     suspend fun getBusinessesByQuery(
         @Query("location") locationName: String,
-        @Query("categories") categories: String
+        @Query("categories") categories: List<String>
     ): Response<YelpResponse>
 }

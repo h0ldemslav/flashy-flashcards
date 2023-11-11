@@ -5,6 +5,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
+fun largeMargin(): Dp = 48.dp
+
+@Composable
 fun extraMediumMargin(): Dp = 32.dp
 
 @Composable

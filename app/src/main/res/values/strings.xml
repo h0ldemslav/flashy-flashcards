@@ -10,4 +10,10 @@
     <string name="welcome_screen_translation_title">Translation</string>
     <string name="welcome_screen_translation_text">Thanks to Google ML Kit you can quickly translate unknown word</string>
     <string name="continue_label">Continue</string>
+    <string name="no_internet_connection">Unable to connect. Please check your internet connection.</string>
+    <string name="explore_screen_info_text">Improve speaking skills by visiting cultural places</string>
+    <string name="search_label">Search</string>
+    <string name="category_label">Category</string>
+    <string name="city_label">City</string>
+    <string name="explore_screen_city_input_error">City must not be empty</string>
 </resources>
