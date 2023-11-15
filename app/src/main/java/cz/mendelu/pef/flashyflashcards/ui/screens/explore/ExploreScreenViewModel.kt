@@ -21,11 +21,27 @@ class ExploreScreenViewModel @Inject constructor(
     var screenData by mutableStateOf(ExploreScreenData())
     var uiState by mutableStateOf(UiState<List<Business>, ExploreErrors>())
 
-    fun getBusinessesByQuery(locationName: String, categories: String) {
+    override fun updateScreenData(data: ExploreScreenData) {
+        screenData = data
+    }
+
+    override fun searchPlaces() {
+        if (isScreenDataValid(screenData)) {
+            screenData = screenData.copy(isValid = true)
+            getBusinesses()
+        } else {
+            screenData = screenData.copy(isValid = false)
+        }
+    }
+
+    private fun getBusinesses() {
         uiState = UiState(loading = true)
 
         launch {
-            val result = yelpAPIRepository.getBusinessesByQuery(locationName, categories)
+            val result = yelpAPIRepository.getBusinessesByQuery(
+                screenData.name,
+                screenData.businessCategory.alias
+            )
 
             when (result) {
                 CommunicationResult.ConnectionError -> {
@@ -39,11 +55,18 @@ class ExploreScreenViewModel @Inject constructor(
                 }
 
                 is CommunicationResult.Error -> {
-                    println("YELP API ERROR CODE: ${result.error.code}")
+                    val errors = getExploreErrorsByResponseStatusCode(result.error.code)
+
+                    uiState = UiState(errors = errors)
                 }
 
                 is CommunicationResult.Exception -> {
-                    println("EXCEPTION OCCURRED")
+                    uiState = UiState(
+                        errors = ExploreErrors(
+                            imageRes = R.drawable.undraw_warning,
+                            messageRes = R.string.exception
+                        )
+                    )
                 }
 
                 is CommunicationResult.Success -> {
@@ -57,20 +80,23 @@ class ExploreScreenViewModel @Inject constructor(
         }
     }
 
-    override fun updateScreenData(data: ExploreScreenData) {
-        screenData = data
-    }
-
-    override fun getBusinesses(locationName: String, categories: String) {
-        if (isScreenDataValid(screenData)) {
-            screenData.isValid = true
-            getBusinessesByQuery(locationName, categories)
-        } else {
-            screenData.isValid = false
-        }
-    }
-
     private fun isScreenDataValid(data: ExploreScreenData): Boolean {
         return data.name.isNotEmpty()
+    }
+
+    private fun getExploreErrorsByResponseStatusCode(statusCode: Int): ExploreErrors {
+        val codesToErrors = mapOf(
+            400 to ExploreErrors(R.drawable.undraw_empty, R.string.city_not_found),
+            401 to ExploreErrors(R.drawable.undraw_security, R.string.unauthorized_access),
+            403 to ExploreErrors(R.drawable.undraw_security, R.string.unable_to_query),
+            429 to ExploreErrors(R.drawable.undraw_progress_data, R.string.too_many_requests),
+            500 to ExploreErrors(R.drawable.undraw_server_down, R.string.server_error),
+            503 to ExploreErrors(R.drawable.undraw_server_down, R.string.server_down)
+        )
+
+        return codesToErrors[statusCode] ?: ExploreErrors(
+            R.drawable.undraw_exploring,
+            R.string.unknown_status_code
+        )
     }
 }

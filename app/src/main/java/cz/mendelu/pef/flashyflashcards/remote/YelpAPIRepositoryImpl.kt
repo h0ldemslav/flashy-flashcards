@@ -16,7 +16,7 @@ class YelpAPIRepositoryImpl @Inject constructor(
         locationName: String,
         categories: String
     ): CommunicationResult<YelpResponse> {
-        val categoriesList = categories.split(",")
+        val categoriesList = categories.split(", ")
 
         return withContext(Dispatchers.IO) {
             processResponse(yelpAPI.getBusinessesByQuery(locationName, categoriesList))
@@ -27,7 +27,8 @@ class YelpAPIRepositoryImpl @Inject constructor(
         return Business(
             remoteId = businessDTO.id,
             name = businessDTO.name,
-            category = businessDTO.categories?.joinToString(",") { it.title } ?: "",
+            imageUrl = businessDTO.imageUrl ?: "",
+            category = businessDTO.categories?.joinToString(", ") { it.title } ?: "",
             displayAddress = businessDTO.location.displayAddress,
             businessUrl = businessDTO.url ?: "",
             rating = businessDTO.rating ?: "",

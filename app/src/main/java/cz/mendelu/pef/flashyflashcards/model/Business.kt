@@ -4,6 +4,7 @@ data class Business(
     var id: Long? = null,
     var remoteId: String,
     var name: String,
+    var imageUrl: String,
     var category: String,
     var displayAddress: List<String>,
     var businessUrl: String,
