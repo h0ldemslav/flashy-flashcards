@@ -14,12 +14,13 @@ class YelpAPIRepositoryImpl @Inject constructor(
 
     override suspend fun getBusinessesByQuery(
         locationName: String,
-        categories: String
+        categories: String,
+        offset: Int
     ): CommunicationResult<YelpResponse> {
         val categoriesList = categories.split(", ")
 
         return withContext(Dispatchers.IO) {
-            processResponse(yelpAPI.getBusinessesByQuery(locationName, categoriesList))
+            processResponse(yelpAPI.getBusinessesByQuery(locationName, categoriesList, offset))
         }
     }
 

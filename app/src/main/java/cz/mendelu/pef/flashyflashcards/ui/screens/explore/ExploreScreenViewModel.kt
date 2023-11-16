@@ -8,6 +8,8 @@ import cz.mendelu.pef.flashyflashcards.architecture.BaseViewModel
 import cz.mendelu.pef.flashyflashcards.architecture.CommunicationResult
 import cz.mendelu.pef.flashyflashcards.architecture.UiState
 import cz.mendelu.pef.flashyflashcards.model.Business
+import cz.mendelu.pef.flashyflashcards.model.Pagination
+import cz.mendelu.pef.flashyflashcards.remote.MAX_OFFSET
 import cz.mendelu.pef.flashyflashcards.remote.YelpAPIRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,7 +21,8 @@ class ExploreScreenViewModel @Inject constructor(
 ) : BaseViewModel(), ExploreScreenActions {
 
     var screenData by mutableStateOf(ExploreScreenData())
-    var uiState by mutableStateOf(UiState<List<Business>, ExploreErrors>())
+    var uiState by mutableStateOf(UiState<MutableList<Business>, ExploreErrors>())
+    private var pagination = Pagination()
 
     override fun updateScreenData(data: ExploreScreenData) {
         screenData = data
@@ -28,25 +31,45 @@ class ExploreScreenViewModel @Inject constructor(
     override fun searchPlaces() {
         if (isScreenDataValid(screenData)) {
             screenData = screenData.copy(isValid = true)
-            getBusinesses()
+
+            pagination.offset = 0
+            pagination.isEndOfPagination = false
+
+            uiState = UiState(
+                // `data` must be set to `mutableListOf` in order to merge on each successful request
+                data = mutableListOf(),
+                loading = true
+            )
+
+            getBusinesses(pagination.offset)
         } else {
             screenData = screenData.copy(isValid = false)
         }
     }
 
-    private fun getBusinesses() {
-        uiState = UiState(loading = true)
+    override fun getAnotherPlaces() {
+        if (!pagination.isEndOfPagination && pagination.offset <= MAX_OFFSET) {
+            uiState = UiState(
+                // `data` must be set to previous value in order to save results from last request
+                data = uiState.data,
+                loading = true
+            )
 
+            getBusinesses(pagination.offset)
+        }
+    }
+
+    private fun getBusinesses(offset: Int) {
         launch {
             val result = yelpAPIRepository.getBusinessesByQuery(
                 screenData.name,
-                screenData.businessCategory.alias
+                screenData.businessCategory.alias,
+                offset
             )
 
             when (result) {
                 CommunicationResult.ConnectionError -> {
                     uiState = UiState(
-                        loading = false,
                         errors = ExploreErrors(
                             imageRes = R.drawable.undraw_signal_searching,
                             messageRes = R.string.no_internet_connection
@@ -70,11 +93,20 @@ class ExploreScreenViewModel @Inject constructor(
                 }
 
                 is CommunicationResult.Success -> {
-                    val businesses = result.data.businesses.map { dto ->
-                        yelpAPIRepository.convertBusinessDTOToBusiness(dto)
+                    val businesses = if (result.data.businesses.isNotEmpty()) {
+                        pagination.offset += (result.data.businesses.size + 1)
+
+                        result.data.businesses.map { dto ->
+                            yelpAPIRepository.convertBusinessDTOToBusiness(dto)
+                        }.toMutableList()
+                    } else {
+                        pagination.isEndOfPagination = true
+
+                        mutableListOf()
                     }
 
-                    uiState = UiState(data = businesses)
+                    uiState.data?.addAll(businesses)
+                    uiState = UiState(data = uiState.data)
                 }
             }
         }

@@ -4,4 +4,5 @@ interface ExploreScreenActions {
 
     fun updateScreenData(data: ExploreScreenData)
     fun searchPlaces()
+    fun getAnotherPlaces()
 }

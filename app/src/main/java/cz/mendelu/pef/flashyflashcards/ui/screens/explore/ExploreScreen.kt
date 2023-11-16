@@ -12,10 +12,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +39,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import cz.mendelu.pef.flashyflashcards.R
 import cz.mendelu.pef.flashyflashcards.architecture.UiState
 import cz.mendelu.pef.flashyflashcards.extensions.getImageStarsResFromFloat
+import cz.mendelu.pef.flashyflashcards.extensions.isAtBottom
 import cz.mendelu.pef.flashyflashcards.model.Business
 import cz.mendelu.pef.flashyflashcards.model.BusinessCategory
 import cz.mendelu.pef.flashyflashcards.navigation.bottombar.BottomBar
@@ -43,6 +47,7 @@ import cz.mendelu.pef.flashyflashcards.navigation.graphs.ExploreNavGraph
 import cz.mendelu.pef.flashyflashcards.ui.elements.BasicScaffold
 import cz.mendelu.pef.flashyflashcards.ui.elements.BasicTextFieldElement
 import cz.mendelu.pef.flashyflashcards.ui.elements.DropDownElement
+import cz.mendelu.pef.flashyflashcards.ui.elements.LoadingScreenCircleIndicator
 import cz.mendelu.pef.flashyflashcards.ui.elements.PlaceholderElement
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
 import cz.mendelu.pef.flashyflashcards.ui.theme.halfMargin
@@ -59,8 +64,7 @@ fun ExploreScreen(
         topAppBarTitle = stringResource(id = R.string.explore),
         bottomAppBar = {
             BottomBar(navController = navController)
-        },
-        showLoading = viewModel.uiState.loading
+        }
     ) { paddingValues ->
         ExploreScreenContent(
             paddingValues = paddingValues,
@@ -74,7 +78,7 @@ fun ExploreScreen(
 @Composable
 fun ExploreScreenContent(
     paddingValues: PaddingValues,
-    uiState: UiState<List<Business>, ExploreErrors>,
+    uiState: UiState<MutableList<Business>, ExploreErrors>,
     screenData: ExploreScreenData,
     actions: ExploreScreenActions
 ) {
@@ -83,9 +87,17 @@ fun ExploreScreenContent(
     }
 
     val controller = LocalSoftwareKeyboardController.current
-
     val maxTextFieldCharacters = 256
     val items = BusinessCategory.values().toList().map { it._name }
+
+    val lazyListState: LazyListState = rememberLazyListState()
+    val isAtBottom = lazyListState.isAtBottom()
+    
+    LaunchedEffect(isAtBottom) {
+        if (isAtBottom) {
+            actions.getAnotherPlaces()
+        }
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -141,7 +153,7 @@ fun ExploreScreenContent(
         }
         
         if (uiState.data != null) {
-            LazyColumn {
+            LazyColumn(state = lazyListState) {
                 uiState.data!!.forEach { business ->
                     item {
                         BusinessRow(business = business)
@@ -153,6 +165,10 @@ fun ExploreScreenContent(
                 imageRes = uiState.errors!!.imageRes,
                 textRes = uiState.errors!!.messageRes
             )
+        }
+
+        if (uiState.loading) {
+            LoadingScreenCircleIndicator(modifier = Modifier.padding(top = basicMargin()))
         }
     }
 }
