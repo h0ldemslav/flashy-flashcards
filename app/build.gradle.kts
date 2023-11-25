@@ -115,9 +115,12 @@ dependencies {
     // Maps
     implementation("com.google.maps.android:maps-compose:3.1.1")
     implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.maps.android:android-maps-utils:3.5.3")
     implementation("com.google.maps.android:maps-compose-widgets:3.1.1")
     implementation("com.google.maps.android:maps-compose-utils:3.1.1")
+
+    implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
 
     // ML Kit Translation
     implementation("com.google.mlkit:translate:17.0.1")

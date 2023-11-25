@@ -31,4 +31,8 @@
     <string name="yelp_link_text">Visit Yelp for more information</string>
     <string name="img_alt_bookmarks">Bookmarks</string>
     <string name="something_went_wrong_error">Something went wrong. Please try again.</string>
+    <string name="route_fallback">Route</string>
+    <string name="failed_to_resolve_position_turned_off_gps">Failed to resolve position: turned off GPS</string>
+    <string name="failed_to_resolve_position_location_permission_denied">Failed to resolve position: location permission was denied</string>
+    <string name="failed_to_get_position_please_try_again">Failed to get position, please, try again</string>
 </resources>
