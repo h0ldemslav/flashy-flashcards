@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.ramcosta.composedestinations.utils.contains
 import cz.mendelu.pef.flashyflashcards.ui.screens.NavGraphs
 import cz.mendelu.pef.flashyflashcards.ui.screens.appCurrentDestinationAsState
 import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.Destination
@@ -23,7 +24,7 @@ fun BottomBar(
 
     BottomNavigation(backgroundColor = MaterialTheme.colorScheme.surface) {
         BottomBarDestination.values().forEach { destination ->
-            val selected = currentDestination?.route == destination.graph.startRoute.route
+            val selected = currentDestination?.let { destination.graph.contains(it) } ?: false
 
             BottomNavigationItem(
                 selected = selected,

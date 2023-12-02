@@ -36,4 +36,15 @@
     <string name="failed_to_resolve_position_location_permission_denied">Failed to resolve position: location permission was denied</string>
     <string name="failed_to_get_position_please_try_again">Failed to get position, please, try again</string>
     <string name="add_label">Add</string>
+    <string name="edit_collection">Edit collection</string>
+    <string name="new_collection">New collection</string>
+    <string name="delete_label">Delete</string>
+    <string name="name_label">Name</string>
+    <string name="source_language_label">Source language</string>
+    <string name="target_language_label">Target language</string>
+    <string name="save_label">Save</string>
+    <string name="edit_label">Edit</string>
+    <string name="empty_collections_placeholder">Empty, create new collection!</string>
+    <string name="word_collections_collection_error">Collection name must not be empty</string>
+    <string name="word_collections_languages_error">Languages cannot be empty or the same</string>
 </resources>
