@@ -135,12 +135,12 @@ fun ExploreScreenContent(
             value = screenData.name,
             onValueChange = {
                 if (it.length <= maxTextFieldCharacters) {
-                    actions.updateScreenData(screenData.copy(name = it, isValid = null))
+                    actions.updateScreenData(screenData.copy(name = it))
                 }
             },
             label = stringResource(id = R.string.city_label),
-            errorMessage = if (screenData.isValid == false)
-                stringResource(id = R.string.explore_screen_city_input_error)
+            errorMessage = if (screenData.errorMessage == R.string.explore_screen_city_input_error)
+                stringResource(id = screenData.errorMessage!!)
             else
                 null
         )
@@ -154,7 +154,7 @@ fun ExploreScreenContent(
             onDismissRequest = { isExpanded = false }
         ) {
             screenData.businessCategory = BusinessCategory.getFromString(it)
-            actions.updateScreenData(screenData.copy())
+            actions.updateScreenData(screenData)
             isExpanded = false
         }
 

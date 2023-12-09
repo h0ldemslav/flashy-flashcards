@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,14 +24,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import cz.mendelu.pef.flashyflashcards.R
+import cz.mendelu.pef.flashyflashcards.model.UiState
 import cz.mendelu.pef.flashyflashcards.model.WordCollection
 import cz.mendelu.pef.flashyflashcards.navigation.bottombar.BottomBar
 import cz.mendelu.pef.flashyflashcards.navigation.graphs.CollectionsNavGraph
 import cz.mendelu.pef.flashyflashcards.ui.elements.BasicScaffold
 import cz.mendelu.pef.flashyflashcards.ui.elements.BasicTextFieldElement
 import cz.mendelu.pef.flashyflashcards.ui.elements.DropDownElement
+import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
-import cz.mendelu.pef.flashyflashcards.ui.theme.mediumMargin
 
 @CollectionsNavGraph
 @Destination
@@ -40,8 +42,10 @@ fun AddEditWordCollectionScreen(
     navController: NavController,
     viewModel: AddEditWordCollectionScreenViewModel = hiltViewModel()
 ) {
-    wordCollection?.let {
-        viewModel.screenData.wordCollection = it
+    LaunchedEffect(Unit) {
+        if (viewModel.uiState.data == null) {
+            viewModel.createOrUpdateWordCollection(wordCollection)
+        }
     }
 
     BasicScaffold(
@@ -66,15 +70,12 @@ fun AddEditWordCollectionScreen(
     ) { paddingValues ->
         AddEditWordCollectionScreenContent(
             paddingValues = paddingValues,
-            screenData = viewModel.screenData,
+            uiState = viewModel.uiState,
             actions = viewModel,
-            onScreenDataChange = {
-                viewModel.screenData = it
-            },
             onSaveButtonClick = {
                 viewModel.validateScreenData()
 
-                if (viewModel.screenData.wordCollectionError == null) {
+                if (viewModel.uiState.errors == null) {
                     viewModel.saveWordCollection()
                     navController.popBackStack()
                 }
@@ -87,8 +88,7 @@ fun AddEditWordCollectionScreen(
 fun AddEditWordCollectionScreenContent(
     paddingValues: PaddingValues,
     actions: AddEditWordCollectionScreenActions,
-    screenData: AddEditWordCollectionScreenData,
-    onScreenDataChange: (AddEditWordCollectionScreenData) -> Unit,
+    uiState: UiState<WordCollection, ScreenErrors>,
     onSaveButtonClick: () -> Unit
 ) {
     var isSourceLanguageExpanded by remember {
@@ -101,68 +101,71 @@ fun AddEditWordCollectionScreenContent(
     val languages = actions.getAllLanguages()
     val languagesFullNames = languages.keys.toList()
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(basicMargin()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(basicMargin())
-    ) {
-        BasicTextFieldElement(
-            value = screenData.wordCollection.name,
-            onValueChange = {
-                val col = screenData.wordCollection.copy(name = it)
-                onScreenDataChange(screenData.copy(wordCollection = col))
-            },
-            label = stringResource(id = R.string.name_label),
-            errorMessage = if (screenData.wordCollectionError == R.string.word_collections_collection_error)
-                stringResource(id = screenData.wordCollectionError!!)
-            else
-                null
-        )
-
-        DropDownElement(
-            items = languagesFullNames,
-            selectedItem = screenData.wordCollection.sourceLanguage,
-            label = stringResource(id = R.string.source_language_label),
-            isExpanded = isSourceLanguageExpanded,
-            onExpandedChange = { isSourceLanguageExpanded = it },
-            onDismissRequest = { isSourceLanguageExpanded = false },
-            onDropDownMenuItemClick = {
-                val col = screenData.wordCollection.copy(sourceLanguage = it)
-                onScreenDataChange(screenData.copy(wordCollection = col))
-
-                isSourceLanguageExpanded = false
-            }
-        )
-
-        DropDownElement(
-            items = languagesFullNames,
-            selectedItem = screenData.wordCollection.targetLanguage,
-            label = stringResource(id = R.string.target_language_label),
-            errorMessage = if (screenData.wordCollectionError == R.string.word_collections_languages_error)
-                stringResource(id = screenData.wordCollectionError!!)
-            else
-                null,
-            isExpanded = isTargetLanguageExpanded,
-            onExpandedChange = { isTargetLanguageExpanded = it },
-            onDismissRequest = { isTargetLanguageExpanded = false },
-            onDropDownMenuItemClick = {
-                val col = screenData.wordCollection.copy(targetLanguage = it)
-                onScreenDataChange(screenData.copy(wordCollection = col))
-
-                isTargetLanguageExpanded = false
-            }
-        )
-        
-        Button(
-            onClick = {
-                onSaveButtonClick()
-            },
-            modifier = Modifier.padding(top = basicMargin())
+    if (uiState.data != null) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(basicMargin()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(basicMargin())
         ) {
-            Text(text = stringResource(id = R.string.save_label))
+            BasicTextFieldElement(
+                value = uiState.data!!.name,
+                onValueChange = {
+                    uiState.data!!.name = it
+                    actions.createOrUpdateWordCollection(uiState.data!!)
+                },
+                label = stringResource(id = R.string.name_label),
+                errorMessage = if (uiState.errors?.messageRes == R.string.word_collections_collection_error)
+                        stringResource(id = uiState.errors!!.messageRes)
+                else
+                    null
+            )
+
+            DropDownElement(
+                items = languagesFullNames,
+                selectedItem = uiState.data!!.sourceLanguage,
+                label = stringResource(id = R.string.source_language_label),
+                isExpanded = isSourceLanguageExpanded,
+                onExpandedChange = { isSourceLanguageExpanded = it },
+                onDismissRequest = { isSourceLanguageExpanded = false },
+                onDropDownMenuItemClick = {
+                    uiState.data!!.sourceLanguage = it
+                    actions.createOrUpdateWordCollection(uiState.data!!)
+
+                    isSourceLanguageExpanded = false
+                }
+            )
+
+            DropDownElement(
+                items = languagesFullNames,
+                selectedItem = uiState.data!!.targetLanguage,
+                label = stringResource(id = R.string.target_language_label),
+                errorMessage = if (uiState.errors?.messageRes == R.string.word_collections_languages_error)
+                    stringResource(id = uiState.errors!!.messageRes)
+                else
+                    null
+                ,
+                isExpanded = isTargetLanguageExpanded,
+                onExpandedChange = { isTargetLanguageExpanded = it },
+                onDismissRequest = { isTargetLanguageExpanded = false },
+                onDropDownMenuItemClick = {
+                    uiState.data!!.targetLanguage = it
+                    actions.createOrUpdateWordCollection(uiState.data!!)
+
+                    isTargetLanguageExpanded = false
+                }
+            )
+
+            Button(
+                onClick = {
+                    onSaveButtonClick()
+                },
+                modifier = Modifier.padding(top = basicMargin())
+            ) {
+                Text(text = stringResource(id = R.string.save_label))
+            }
         }
     }
 }

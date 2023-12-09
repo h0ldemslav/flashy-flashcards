@@ -26,12 +26,16 @@ class ExploreScreenViewModel @Inject constructor(
     private var pagination = Pagination()
 
     override fun updateScreenData(data: ExploreScreenData) {
-        screenData = data
+        screenData = ExploreScreenData(
+            name = data.name,
+            businessCategory = data.businessCategory,
+            errorMessage = data.errorMessage
+        )
     }
 
     override fun searchPlaces() {
         if (isScreenDataValid(screenData)) {
-            screenData = screenData.copy(isValid = true)
+            screenData = screenData.copy(errorMessage = null)
 
             pagination.offset = 0
             pagination.isEndOfPagination = false
@@ -44,7 +48,7 @@ class ExploreScreenViewModel @Inject constructor(
 
             getBusinesses(pagination.offset)
         } else {
-            screenData = screenData.copy(isValid = false)
+            screenData = screenData.copy(errorMessage = R.string.explore_screen_city_input_error)
         }
     }
 
