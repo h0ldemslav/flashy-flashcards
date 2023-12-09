@@ -10,8 +10,8 @@ data class YelpResponse(
 
 data class BusinessDTO(
     val id: String,
-    val alias: String,
-    val name: String,
+    val alias: String?,
+    val name: String?,
     @SerializedName("image_url")
     val imageUrl: String? = null,
     @SerializedName("is_closed")
@@ -21,25 +21,25 @@ data class BusinessDTO(
     val reviewCount: Int? = null,
     val categories: List<Category>? = null,
     val rating: String? = null,
-    val coordinates: Coordinate,
+    val coordinates: Coordinate?,
     val transactions: List<String>? = null,
     val price: String? = null,
-    val location: Location,
-    val phone: String,
+    val location: Location?,
+    val phone: String?,
     @SerializedName("display_phone")
-    val displayPhone: String,
+    val displayPhone: String?,
     val distance: String? = null,
     val hours: List<BusinessHours>?
 )
 
 data class Category(
-    val alias: String,
-    val title: String
+    val alias: String?,
+    val title: String?
 )
 
 data class Coordinate(
-    val latitude: String,
-    val longitude: String
+    val latitude: String?,
+    val longitude: String?
 )
 
 data class Location(
@@ -52,28 +52,28 @@ data class Location(
     val country: String? = null,
     val state: String? = null,
     @SerializedName("display_address")
-    val displayAddress: List<String>,
+    val displayAddress: List<String>?,
     @SerializedName("cross_streets")
     val crossStreets: String?
 )
 
 data class BusinessHours(
     @SerializedName("hour_type")
-    val hourType: String,
-    val open: List<OpenHours>,
+    val hourType: String?,
+    val open: List<OpenHours>?,
     @SerializedName("is_open_now")
-    val isOpenNow: Boolean
+    val isOpenNow: Boolean?
 )
 
 data class OpenHours(
-    val day: Int,
-    val start: String,
-    val end: String,
+    val day: Int?,
+    val start: String?,
+    val end: String?,
     @SerializedName("is_overnight")
-    val isOvernight: Boolean,
+    val isOvernight: Boolean?,
 )
 
 data class Region(
-    val center: Location
+    val center: Location?
 )
 

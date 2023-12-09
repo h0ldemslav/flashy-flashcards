@@ -25,7 +25,19 @@ class AddEditWordCollectionScreenViewModel @Inject constructor(
     fun saveWordCollection() {
         if (uiState.data != null) {
             launch {
-                wordCollectionsRepository.createNewWordCollection(uiState.data!!)
+                if (uiState.data!!.id != null) {
+                    wordCollectionsRepository.updateWordCollection(uiState.data!!)
+                } else {
+                    wordCollectionsRepository.createNewWordCollection(uiState.data!!)
+                }
+            }
+        }
+    }
+
+    fun deleteWordCollection() {
+        if (uiState.data != null) {
+            launch {
+                wordCollectionsRepository.deleteWordCollection(uiState.data!!)
             }
         }
     }

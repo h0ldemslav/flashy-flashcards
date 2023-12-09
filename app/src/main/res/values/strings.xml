@@ -47,4 +47,8 @@
     <string name="empty_collections_placeholder">Empty, create new collection!</string>
     <string name="word_collections_collection_error">Collection name must not be empty</string>
     <string name="word_collections_languages_error">Languages cannot be empty or the same</string>
+    <string name="collection_dialog_title">Remove collection</string>
+    <string name="collection_dialog_content">Are you sure you want to remove this collection? This will also erase all collection words.</string>
+    <string name="dialog_dismiss_label">Cancel</string>
+    <string name="dialog_remove_label">Remove</string>
 </resources>

@@ -8,6 +8,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+const val INVALID_LATLNG: Double = -1.0
+
 class YelpAPIRepositoryImpl @Inject constructor(
     private val yelpAPI: YelpAPI
 ) : YelpAPIRepository {
@@ -31,15 +33,15 @@ class YelpAPIRepositoryImpl @Inject constructor(
     override fun convertBusinessDTOToBusiness(businessDTO: BusinessDTO): Business {
         return Business(
             remoteId = businessDTO.id,
-            name = businessDTO.name,
+            name = businessDTO.name ?: "",
             imageUrl = businessDTO.imageUrl ?: "",
-            category = businessDTO.categories?.joinToString(", ") { it.title } ?: "",
-            displayAddress = businessDTO.location.displayAddress,
+            category = businessDTO.categories?.joinToString(", ") { it.title ?: "" } ?: "",
+            displayAddress = businessDTO.location?.displayAddress ?: emptyList(),
             businessUrl = businessDTO.url ?: "",
             rating = businessDTO.rating ?: "",
             reviewCount = businessDTO.reviewCount ?: 0,
-            latitude = businessDTO.coordinates.latitude.toDouble(),
-            longitude = businessDTO.coordinates.longitude.toDouble()
+            latitude = businessDTO.coordinates?.latitude?.toDoubleOrNull() ?: INVALID_LATLNG,
+            longitude = businessDTO.coordinates?.longitude?.toDoubleOrNull() ?: INVALID_LATLNG
         )
     }
 

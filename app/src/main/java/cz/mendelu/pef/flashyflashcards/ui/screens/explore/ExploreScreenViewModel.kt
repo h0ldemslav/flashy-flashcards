@@ -9,6 +9,7 @@ import cz.mendelu.pef.flashyflashcards.architecture.CommunicationResult
 import cz.mendelu.pef.flashyflashcards.model.UiState
 import cz.mendelu.pef.flashyflashcards.model.Business
 import cz.mendelu.pef.flashyflashcards.model.Pagination
+import cz.mendelu.pef.flashyflashcards.remote.INVALID_LATLNG
 import cz.mendelu.pef.flashyflashcards.remote.MAX_OFFSET
 import cz.mendelu.pef.flashyflashcards.remote.YelpAPIRepository
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
@@ -102,16 +103,20 @@ class ExploreScreenViewModel @Inject constructor(
                 }
 
                 is CommunicationResult.Success -> {
-                    val businesses = if (result.data.businesses.isNotEmpty()) {
+                    val businesses = mutableListOf<Business>()
+
+                    if (result.data.businesses.isNotEmpty()) {
                         pagination.offset += (result.data.businesses.size + 1)
 
-                        result.data.businesses.map { dto ->
-                            yelpAPIRepository.convertBusinessDTOToBusiness(dto)
-                        }.toMutableList()
+                        result.data.businesses.forEach { dto ->
+                            val business = yelpAPIRepository.convertBusinessDTOToBusiness(dto)
+
+                            if (isBusinessValid(business)) {
+                                businesses.add(business)
+                            }
+                        }
                     } else {
                         pagination.isEndOfPagination = true
-
-                        mutableListOf()
                     }
 
                     uiState.data?.addAll(businesses)
@@ -139,5 +144,18 @@ class ExploreScreenViewModel @Inject constructor(
             R.drawable.undraw_exploring,
             R.string.unknown_status_code
         )
+    }
+
+    private fun isBusinessValid(business: Business): Boolean {
+        val emptyName = business.name.isEmpty()
+        val invalidLatLng = business.latitude == INVALID_LATLNG || business.longitude == INVALID_LATLNG
+        val emptyDisplayAddress = business.displayAddress.isEmpty()
+        val emptyBusinessUrl = business.businessUrl.isEmpty()
+
+        if (emptyName || invalidLatLng || emptyDisplayAddress || emptyBusinessUrl) {
+            return false
+        }
+
+        return true
     }
 }

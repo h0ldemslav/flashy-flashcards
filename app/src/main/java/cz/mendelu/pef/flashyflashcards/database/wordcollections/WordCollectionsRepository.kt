@@ -8,4 +8,6 @@ interface WordCollectionsRepository {
 
     fun getAllWordCollections(): Flow<List<WordCollectionEntity>>
     suspend fun createNewWordCollection(wordCollection: WordCollection)
+    suspend fun updateWordCollection(wordCollection: WordCollection)
+    suspend fun deleteWordCollection(wordCollection: WordCollection)
 }

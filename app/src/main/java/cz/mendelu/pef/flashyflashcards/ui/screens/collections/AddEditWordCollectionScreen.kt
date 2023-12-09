@@ -28,6 +28,7 @@ import cz.mendelu.pef.flashyflashcards.model.UiState
 import cz.mendelu.pef.flashyflashcards.model.WordCollection
 import cz.mendelu.pef.flashyflashcards.navigation.bottombar.BottomBar
 import cz.mendelu.pef.flashyflashcards.navigation.graphs.CollectionsNavGraph
+import cz.mendelu.pef.flashyflashcards.ui.elements.BasicAlertDialog
 import cz.mendelu.pef.flashyflashcards.ui.elements.BasicScaffold
 import cz.mendelu.pef.flashyflashcards.ui.elements.BasicTextFieldElement
 import cz.mendelu.pef.flashyflashcards.ui.elements.DropDownElement
@@ -42,6 +43,10 @@ fun AddEditWordCollectionScreen(
     navController: NavController,
     viewModel: AddEditWordCollectionScreenViewModel = hiltViewModel()
 ) {
+    var isRemoveCollectionDialogOpened by remember {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(Unit) {
         if (viewModel.uiState.data == null) {
             viewModel.createOrUpdateWordCollection(wordCollection)
@@ -59,7 +64,9 @@ fun AddEditWordCollectionScreen(
         onBackClick = { navController.popBackStack() },
         actions = {
             if (wordCollection != null) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = {
+                    isRemoveCollectionDialogOpened = true
+                }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(id = R.string.delete_label)
@@ -81,6 +88,17 @@ fun AddEditWordCollectionScreen(
                 }
             }
         )
+
+        if (isRemoveCollectionDialogOpened) {
+            BasicAlertDialog(onDismissRequest = {
+                isRemoveCollectionDialogOpened = false
+            }) {
+                isRemoveCollectionDialogOpened = false
+
+                viewModel.deleteWordCollection()
+                navController.popBackStack()
+            }
+        }
     }
 }
 
