@@ -55,4 +55,6 @@
     <string name="removed_from_bookmarks">Removed from bookmarks</string>
     <string name="bookmarks">Bookmarks</string>
     <string name="bookmarks_search_field_hint">Type city, category or place name to filter out</string>
+    <string name="translation_label">Translation</string>
+    <string name="new_word">New word</string>
 </resources>
