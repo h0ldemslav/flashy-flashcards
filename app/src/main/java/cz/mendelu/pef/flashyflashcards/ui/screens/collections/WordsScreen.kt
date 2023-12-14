@@ -1,9 +1,6 @@
 package cz.mendelu.pef.flashyflashcards.ui.screens.collections
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -12,7 +9,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -105,23 +101,12 @@ fun WordsScreenContent(
                 }
             }
         }
-    } else if (uiState.errors != null) {
-        PlaceholderElement(
-            imageRes = uiState.errors!!.imageRes,
-            textRes = uiState.errors!!.messageRes
-        )
     } else {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            PlaceholderElement(
-                imageRes = null,
-                textRes = R.string.empty_placeholder
-            )
-        }
+        PlaceholderElement(
+            imageRes = uiState.errors?.imageRes,
+            textRes = uiState.errors?.messageRes ?: R.string.empty_placeholder,
+            paddingValues = paddingValues,
+            fillMaxSize = true
+        )
     }
 }

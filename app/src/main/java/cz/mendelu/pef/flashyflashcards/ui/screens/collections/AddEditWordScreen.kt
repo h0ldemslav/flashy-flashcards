@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -154,17 +153,11 @@ fun AddEditWordScreenContent(
             }
         }
     } else if (uiState.errors != null) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            PlaceholderElement(
-                imageRes = uiState.errors!!.imageRes,
-                textRes = uiState.errors!!.messageRes
-            )
-        }
+        PlaceholderElement(
+            imageRes = uiState.errors!!.imageRes,
+            textRes = uiState.errors!!.messageRes,
+            paddingValues = paddingValues,
+            fillMaxSize = true
+        )
     }
 }

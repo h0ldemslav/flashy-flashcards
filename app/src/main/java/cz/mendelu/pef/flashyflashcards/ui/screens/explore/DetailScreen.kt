@@ -203,12 +203,12 @@ fun DetailScreenContent(
             }
         }
     } else if (uiState.errors != null) {
-        Column(modifier = Modifier.padding(paddingValues)) {
-            PlaceholderElement(
-                imageRes = uiState.errors!!.imageRes,
-                textRes = uiState.errors!!.messageRes
-            )
-        }
+        PlaceholderElement(
+            imageRes = uiState.errors!!.imageRes,
+            textRes = uiState.errors!!.messageRes,
+            paddingValues = paddingValues,
+            fillMaxSize = true
+        )
     }
 }
 

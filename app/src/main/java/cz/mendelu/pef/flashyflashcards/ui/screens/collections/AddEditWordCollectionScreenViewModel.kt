@@ -20,53 +20,57 @@ class AddEditWordCollectionScreenViewModel @Inject constructor(
     private val wordCollectionsRepository: WordCollectionsRepository,
 ) : BaseViewModel(), AddEditWordCollectionScreenActions {
 
-    var uiState by mutableStateOf(UiState<WordCollection, ScreenErrors>())
+    var uiState by mutableStateOf(UiState<WordCollection, ScreenErrors>(
+        // Initial data is necessary!
+        data = WordCollection(
+            name = "",
+            sourceLanguage = "",
+            targetLanguage = ""
+        )
+    ))
 
-    fun saveWordCollection() {
-        if (uiState.data != null) {
-            launch {
-                if (uiState.data!!.id != null) {
-                    wordCollectionsRepository.updateWordCollection(uiState.data!!)
-                } else {
-                    wordCollectionsRepository.createNewWordCollection(uiState.data!!)
-                }
-            }
-        }
-    }
-
-    fun deleteWordCollection() {
-        if (uiState.data != null) {
-            launch {
-                wordCollectionsRepository.deleteWordCollection(uiState.data!!)
-            }
-        }
-    }
-
-    fun validateScreenData() {
-        uiState.data?.let { col ->
-            val isNameEmpty = col.name.isEmpty()
-            val languagesEitherEmptyOrTheSame = col.sourceLanguage.isEmpty() ||
-                    col.targetLanguage.isEmpty() || col.sourceLanguage == col.targetLanguage
-
-            val errors = if (isNameEmpty) {
-                ScreenErrors(
-                    imageRes = null,
-                    messageRes = R.string.word_collections_collection_error
-                )
-            } else if (languagesEitherEmptyOrTheSame) {
-                ScreenErrors(
-                    imageRes = null,
-                    messageRes = R.string.word_collections_languages_error
-                )
+    override fun saveWordCollection(wordCollection: WordCollection) {
+        launch {
+            if (wordCollection.id != null) {
+                wordCollectionsRepository.updateWordCollection(wordCollection)
             } else {
-                null
+                wordCollectionsRepository.createNewWordCollection(wordCollection)
             }
-
-            uiState = UiState(
-                data = col,
-                errors = errors
-            )
         }
+    }
+
+    override fun deleteWordCollection(wordCollection: WordCollection) {
+        launch {
+            wordCollectionsRepository.deleteWordCollection(wordCollection)
+        }
+    }
+
+    override fun isWordCollectionValid(wordCollection: WordCollection): Boolean {
+        val isNameEmpty = wordCollection.name.isEmpty()
+        val languagesEitherEmptyOrTheSame = wordCollection.sourceLanguage.isEmpty() ||
+                wordCollection.targetLanguage.isEmpty() ||
+                wordCollection.sourceLanguage == wordCollection.targetLanguage
+
+        val errors = if (isNameEmpty) {
+            ScreenErrors(
+                imageRes = null,
+                messageRes = R.string.word_collections_collection_error
+            )
+        } else if (languagesEitherEmptyOrTheSame) {
+            ScreenErrors(
+                imageRes = null,
+                messageRes = R.string.word_collections_languages_error
+            )
+        } else {
+            null
+        }
+
+        uiState = UiState(
+            data = wordCollection,
+            errors = errors
+        )
+
+        return errors == null
     }
 
     override fun getAllLanguages(): Map<String, String> {
@@ -90,22 +94,11 @@ class AddEditWordCollectionScreenViewModel @Inject constructor(
     }
 
     fun getWordCollectionById(id: Long?) {
-        uiState = UiState(
-            loading = true
-        )
-
         launch {
             wordCollectionsRepository.getWordCollectionById(id).collect { entity ->
                 if (entity != null) {
                     val wordCollection = WordCollection.createFromEntity(entity)
                     setWordCollection(wordCollection)
-                } else {
-                    uiState = UiState(
-                        errors = ScreenErrors(
-                            imageRes = R.drawable.undraw_warning,
-                            messageRes = R.string.unknown_error
-                        )
-                    )
                 }
             }
         }

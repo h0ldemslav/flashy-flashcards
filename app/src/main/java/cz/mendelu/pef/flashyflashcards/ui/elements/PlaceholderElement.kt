@@ -3,7 +3,10 @@ package cz.mendelu.pef.flashyflashcards.ui.elements
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,13 +25,25 @@ import cz.mendelu.pef.flashyflashcards.ui.theme.largeMargin
 @Composable
 fun PlaceholderElement(
     @DrawableRes imageRes: Int?,
-    @StringRes textRes: Int
+    @StringRes textRes: Int,
+    fillMaxSize: Boolean = false,
+    paddingValues: PaddingValues? = null
 ) {
+    val initialPadding = paddingValues ?: PaddingValues()
+
     Column(
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxWidth()
+            .padding(initialPadding)
             .padding(basicMargin())
+            .then(
+                if (fillMaxSize) {
+                    Modifier.fillMaxSize()
+                } else {
+                    Modifier.fillMaxWidth()
+                }
+            )
     ) {
         if (imageRes != null) {
             Image(

@@ -51,8 +51,6 @@ fun AddEditWordCollectionScreen(
     LaunchedEffect(Unit) {
         if (wordCollectionId != null) {
             viewModel.getWordCollectionById(wordCollectionId)
-        } else {
-            viewModel.setWordCollection(null)
         }
     }
 
@@ -80,16 +78,9 @@ fun AddEditWordCollectionScreen(
     ) { paddingValues ->
         AddEditWordCollectionScreenContent(
             paddingValues = paddingValues,
+            navController = navController,
             uiState = viewModel.uiState,
-            actions = viewModel,
-            onSaveButtonClick = {
-                viewModel.validateScreenData()
-
-                if (viewModel.uiState.errors == null) {
-                    viewModel.saveWordCollection()
-                    navController.popBackStack()
-                }
-            }
+            actions = viewModel
         )
 
         if (isRemoveCollectionDialogOpened) {
@@ -98,8 +89,10 @@ fun AddEditWordCollectionScreen(
             }) {
                 isRemoveCollectionDialogOpened = false
 
-                viewModel.deleteWordCollection()
-                navController.popBackStack()
+                if (viewModel.uiState.data != null) {
+                    viewModel.deleteWordCollection(viewModel.uiState.data!!)
+                    navController.popBackStack()
+                }
             }
         }
     }
@@ -108,9 +101,9 @@ fun AddEditWordCollectionScreen(
 @Composable
 fun AddEditWordCollectionScreenContent(
     paddingValues: PaddingValues,
+    navController: NavController,
     actions: AddEditWordCollectionScreenActions,
-    uiState: UiState<WordCollection, ScreenErrors>,
-    onSaveButtonClick: () -> Unit
+    uiState: UiState<WordCollection, ScreenErrors>
 ) {
     var isSourceLanguageExpanded by remember {
         mutableStateOf(false)
@@ -181,7 +174,12 @@ fun AddEditWordCollectionScreenContent(
 
             Button(
                 onClick = {
-                    onSaveButtonClick()
+                    val isWordCollectionValid = actions.isWordCollectionValid(uiState.data!!)
+
+                    if (isWordCollectionValid) {
+                        actions.saveWordCollection(uiState.data!!)
+                        navController.popBackStack()
+                    }
                 },
                 modifier = Modifier.padding(top = basicMargin())
             ) {
@@ -189,17 +187,11 @@ fun AddEditWordCollectionScreenContent(
             }
         }
     } else if (uiState.errors != null) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            PlaceholderElement(
-                imageRes = uiState.errors!!.imageRes,
-                textRes = uiState.errors!!.messageRes
-            )
-        }
+        PlaceholderElement(
+            imageRes = uiState.errors!!.imageRes,
+            textRes = uiState.errors!!.messageRes,
+            paddingValues = paddingValues,
+            fillMaxSize = true
+        )
     }
 }

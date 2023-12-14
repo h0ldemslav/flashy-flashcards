@@ -1,6 +1,5 @@
 package cz.mendelu.pef.flashyflashcards.ui.screens.explore
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -108,24 +106,12 @@ fun BookmarksScreenContent(
                     }
                 }
             }
-        } else if (uiState.errors != null) {
-            PlaceholderElement(
-                imageRes = null,
-                textRes = uiState.errors!!.messageRes
-            )
         } else {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                PlaceholderElement(
-                    imageRes = null,
-                    textRes = R.string.empty_placeholder
-                )
-            }
+            PlaceholderElement(
+                imageRes = uiState.errors?.imageRes,
+                textRes = uiState.errors?.messageRes ?: R.string.empty_placeholder,
+                fillMaxSize = true
+            )
         }
     }
 }
