@@ -6,20 +6,24 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import cz.mendelu.pef.flashyflashcards.database.businesses.BusinessesDao
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordCollectionsDao
+import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordsDao
 import cz.mendelu.pef.flashyflashcards.model.BusinessEntity
 import cz.mendelu.pef.flashyflashcards.model.WordCollectionEntity
+import cz.mendelu.pef.flashyflashcards.model.WordEntity
 
 @Database(
     entities = [
         WordCollectionEntity::class,
+        WordEntity::class,
         BusinessEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class FlashyFlashcardsDatabase : RoomDatabase() {
 
     abstract fun wordCollectionsDao(): WordCollectionsDao
+    abstract fun wordsDao(): WordsDao
     abstract fun businessesDao(): BusinessesDao
 
     companion object {

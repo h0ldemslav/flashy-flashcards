@@ -6,6 +6,9 @@ import cz.mendelu.pef.flashyflashcards.database.businesses.BusinessesRepository
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordCollectionsDao
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordCollectionsRepository
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordCollectionsRepositoryImpl
+import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordsDao
+import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordsRepository
+import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordsRepositoryImpl
 import cz.mendelu.pef.flashyflashcards.remote.YelpAPI
 import cz.mendelu.pef.flashyflashcards.remote.YelpAPIRepository
 import cz.mendelu.pef.flashyflashcards.remote.YelpAPIRepositoryImpl
@@ -32,6 +35,11 @@ object RepositoryModule {
     @Singleton
     fun provideWordCollectionsRepository(dao: WordCollectionsDao): WordCollectionsRepository =
         WordCollectionsRepositoryImpl(dao)
+
+    @Provides
+    @Singleton
+    fun provideWordsRepository(dao: WordsDao): WordsRepository =
+        WordsRepositoryImpl(dao)
 
     @Provides
     @Singleton
