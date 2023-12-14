@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -57,11 +56,6 @@ fun WordCollectionsScreen(
         WordCollectionsScreenContent(
             paddingValues = paddingValues,
             uiState = viewModel.uiState,
-            onIconClick = {
-                navController.navigate(
-                    AddEditWordCollectionScreenDestination(wordCollectionId = it.id)
-                )
-            },
             onRowClick = {
                 navController.navigate(
                     WordsScreenDestination(
@@ -78,7 +72,6 @@ fun WordCollectionsScreen(
 fun WordCollectionsScreenContent(
     paddingValues: PaddingValues,
     uiState: UiState<MutableList<WordCollection>, ScreenErrors>,
-    onIconClick: (WordCollection) -> Unit,
     onRowClick: (WordCollection) -> Unit
 ) {
     if (uiState.data?.isNotEmpty() == true) {
@@ -92,11 +85,6 @@ fun WordCollectionsScreenContent(
                     ListRow(
                         headline = col.name,
                         supportingText = "${col.sourceLanguage} - ${col.targetLanguage}",
-                        actionIcon = Icons.Default.Edit,
-                        actionIconDescription = stringResource(id = R.string.edit_label),
-                        onActionIconClick = {
-                            onIconClick(col)
-                        },
                         onRowClick = {
                             onRowClick(col)
                         }

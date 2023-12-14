@@ -8,7 +8,6 @@ import cz.mendelu.pef.flashyflashcards.architecture.BaseViewModel
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordsRepository
 import cz.mendelu.pef.flashyflashcards.model.UiState
 import cz.mendelu.pef.flashyflashcards.model.Word
-import cz.mendelu.pef.flashyflashcards.model.WordEntity
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -68,22 +67,18 @@ class AddEditWordScreenViewModel @Inject constructor(
     }
 
     override fun saveWord(word: Word) {
-        val wordEntity = WordEntity.createFromWord(word)
-
         launch {
-            if (wordEntity.id != null) {
-                wordsRepository.updateWord(wordEntity)
+            if (word.id != null) {
+                wordsRepository.updateWord(word)
             } else {
-                wordsRepository.addNewWord(wordEntity)
+                wordsRepository.addNewWord(word)
             }
         }
     }
 
     override fun deleteWord(word: Word) {
-        val wordEntity = WordEntity.createFromWord(word)
-
         launch {
-            wordsRepository.deleteWord(wordEntity)
+            wordsRepository.deleteWord(word)
         }
     }
 }

@@ -23,6 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.navigate
+import com.ramcosta.composedestinations.navigation.popUpTo
 import cz.mendelu.pef.flashyflashcards.R
 import cz.mendelu.pef.flashyflashcards.model.UiState
 import cz.mendelu.pef.flashyflashcards.model.WordCollection
@@ -34,6 +36,8 @@ import cz.mendelu.pef.flashyflashcards.ui.elements.BasicTextFieldElement
 import cz.mendelu.pef.flashyflashcards.ui.elements.DropDownElement
 import cz.mendelu.pef.flashyflashcards.ui.elements.PlaceholderElement
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
+import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.WordCollectionsScreenDestination
+import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.WordsScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
 
 @CollectionsNavGraph
@@ -91,7 +95,11 @@ fun AddEditWordCollectionScreen(
 
                 if (viewModel.uiState.data != null) {
                     viewModel.deleteWordCollection(viewModel.uiState.data!!)
-                    navController.popBackStack()
+                    navController.navigate(WordCollectionsScreenDestination) {
+                        popUpTo(WordsScreenDestination) {
+                            inclusive = true
+                        }
+                    }
                 }
             }
         }
@@ -178,6 +186,9 @@ fun AddEditWordCollectionScreenContent(
 
                     if (isWordCollectionValid) {
                         actions.saveWordCollection(uiState.data!!)
+                        navController.previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("updated_collection_name", uiState.data!!.name)
                         navController.popBackStack()
                     }
                 },
