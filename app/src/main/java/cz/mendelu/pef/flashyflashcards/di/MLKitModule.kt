@@ -1,6 +1,6 @@
 package cz.mendelu.pef.flashyflashcards.di
 
-import cz.mendelu.pef.flashyflashcards.mlkit.Translator
+import cz.mendelu.pef.flashyflashcards.mlkit.MLKitTranslator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,5 +13,5 @@ object MLKitModule {
 
     @Provides
     @Singleton
-    fun provideTranslator(): Translator = Translator()
+    fun provideTranslator(): MLKitTranslator = MLKitTranslator()
 }

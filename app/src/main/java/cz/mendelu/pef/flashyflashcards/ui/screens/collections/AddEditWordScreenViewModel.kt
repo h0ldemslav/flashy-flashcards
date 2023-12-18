@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import cz.mendelu.pef.flashyflashcards.R
 import cz.mendelu.pef.flashyflashcards.architecture.BaseViewModel
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordsRepository
+import cz.mendelu.pef.flashyflashcards.mlkit.MLKitTranslator
 import cz.mendelu.pef.flashyflashcards.model.UiState
 import cz.mendelu.pef.flashyflashcards.model.Word
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditWordScreenViewModel @Inject constructor(
-    private val wordsRepository: WordsRepository
+    private val wordsRepository: WordsRepository,
+    private val mLKitTranslator: MLKitTranslator
 ) : BaseViewModel(), AddEditWordScreenActions {
 
     var uiState by mutableStateOf(UiState<Word, ScreenErrors>(
@@ -80,5 +82,47 @@ class AddEditWordScreenViewModel @Inject constructor(
         launch {
             wordsRepository.deleteWord(word)
         }
+    }
+
+    override fun translateWord(word: Word) {
+        uiState = UiState(
+            data = word.copy(),
+            loading = true
+        )
+
+        mLKitTranslator.setTranslator(
+            onDownloadSuccess = {
+                mLKitTranslator.translate(
+                    word.name,
+                    onSuccessTranslate = {
+                        uiState = UiState(
+                            data = word.copy(translation = it)
+                        )
+                    },
+                    onFailureTranslate = {
+                        uiState = UiState(
+                            data = word.copy(),
+                            errors = ScreenErrors(
+                                imageRes = null,
+                                messageRes = R.string.failed_to_translate_word
+                            )
+                        )
+                    }
+                )
+            },
+            onDownloadFailure = {
+                uiState = UiState(
+                    data = word.copy(),
+                    errors = ScreenErrors(
+                        imageRes = null,
+                        messageRes = R.string.failed_to_download_language_model
+                    )
+                )
+            }
+        )
+    }
+
+    override fun closeTranslator() {
+        mLKitTranslator.releaseTranslator()
     }
 }

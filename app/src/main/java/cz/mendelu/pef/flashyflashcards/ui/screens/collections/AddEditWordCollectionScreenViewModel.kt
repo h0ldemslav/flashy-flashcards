@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import cz.mendelu.pef.flashyflashcards.R
 import cz.mendelu.pef.flashyflashcards.architecture.BaseViewModel
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordCollectionsRepository
-import cz.mendelu.pef.flashyflashcards.mlkit.Translator
+import cz.mendelu.pef.flashyflashcards.mlkit.MLKitTranslator
 import cz.mendelu.pef.flashyflashcards.model.UiState
 import cz.mendelu.pef.flashyflashcards.model.WordCollection
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
@@ -16,8 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditWordCollectionScreenViewModel @Inject constructor(
-    private val translator: Translator,
     private val wordCollectionsRepository: WordCollectionsRepository,
+    private val mLKitTranslator: MLKitTranslator
 ) : BaseViewModel(), AddEditWordCollectionScreenActions {
 
     var uiState by mutableStateOf(UiState<WordCollection, ScreenErrors>(
@@ -31,6 +31,11 @@ class AddEditWordCollectionScreenViewModel @Inject constructor(
 
     override fun saveWordCollection(wordCollection: WordCollection) {
         launch {
+            mLKitTranslator.setLanguages(
+                wordCollection.sourceLanguage,
+                wordCollection.targetLanguage
+            )
+
             if (wordCollection.id != null) {
                 wordCollectionsRepository.updateWordCollection(wordCollection)
             } else {
@@ -74,7 +79,7 @@ class AddEditWordCollectionScreenViewModel @Inject constructor(
     }
 
     override fun getAllLanguages(): Map<String, String> {
-        return translator.getListOfFullLanguageNames()
+        return mLKitTranslator.getMapOfLanguages()
     }
 
     override fun setWordCollection(wordCollection: WordCollection?) {

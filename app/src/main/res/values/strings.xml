@@ -62,4 +62,6 @@
     <string name="unknown_error">Unknown error, please, send us a feedback.</string>
     <string name="words_name_error">Name must not be empty</string>
     <string name="words_translation_error">Translation must not be empty</string>
+    <string name="failed_to_translate_word">Failed to translate, try again</string>
+    <string name="failed_to_download_language_model">Failed to download translator, try again</string>
 </resources>

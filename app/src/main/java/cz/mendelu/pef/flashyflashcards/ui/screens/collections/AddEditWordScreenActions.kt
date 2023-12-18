@@ -8,4 +8,6 @@ interface AddEditWordScreenActions {
     fun setWord(word: Word?, collectionId: Long? = null)
     fun saveWord(word: Word)
     fun deleteWord(word: Word)
+    fun translateWord(word: Word)
+    fun closeTranslator()
 }

@@ -1,5 +1,7 @@
 package cz.mendelu.pef.flashyflashcards.ui.screens.collections
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,7 +19,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -29,6 +33,7 @@ import cz.mendelu.pef.flashyflashcards.navigation.bottombar.BottomBar
 import cz.mendelu.pef.flashyflashcards.navigation.graphs.CollectionsNavGraph
 import cz.mendelu.pef.flashyflashcards.ui.elements.BasicScaffold
 import cz.mendelu.pef.flashyflashcards.ui.elements.BasicTextFieldElement
+import cz.mendelu.pef.flashyflashcards.ui.elements.LoadingScreenCircleIndicator
 import cz.mendelu.pef.flashyflashcards.ui.elements.PlaceholderElement
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
@@ -42,6 +47,8 @@ fun AddEditWordScreen(
     collectionId: Long?,
     word: Word?
 ) {
+    val context = LocalContext.current
+
     LaunchedEffect(Unit) {
         viewModel.setWord(word, collectionId)
     }
@@ -55,7 +62,10 @@ fun AddEditWordScreen(
         bottomAppBar = {
             BottomBar(navController = navController)
         },
-        onBackClick = { navController.popBackStack() },
+        onBackClick = {
+            viewModel.closeTranslator()
+            navController.popBackStack()
+        },
         actions = {
             if (viewModel.uiState.data?.id != null) {
                 IconButton(onClick = {
@@ -73,6 +83,7 @@ fun AddEditWordScreen(
         AddEditWordScreenContent(
             paddingValues = paddingValues,
             navController = navController,
+            context = context,
             uiState = viewModel.uiState,
             actions = viewModel
         )
@@ -83,12 +94,23 @@ fun AddEditWordScreen(
 fun AddEditWordScreenContent(
     paddingValues: PaddingValues,
     navController: NavController,
+    context: Context,
     uiState: UiState<Word, ScreenErrors>,
     actions: AddEditWordScreenActions
 ) {
     if (uiState.data != null) {
+        // MLKit failed
+        if (uiState.errors != null) {
+            Toast.makeText(
+                context,
+                context.getString(uiState.errors!!.messageRes),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
         Column(
             verticalArrangement = Arrangement.spacedBy(basicMargin()),
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -128,7 +150,10 @@ fun AddEditWordScreenContent(
                     .padding(horizontal = basicMargin())
             ) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    enabled = !uiState.loading,
+                    onClick = {
+                        actions.translateWord(uiState.data!!)
+                    },
                     modifier = Modifier.weight(0.4f),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.secondary
@@ -150,6 +175,12 @@ fun AddEditWordScreenContent(
                 ) {
                     Text(text = stringResource(id = R.string.save_label))
                 }
+            }
+
+            if (uiState.loading) {
+                LoadingScreenCircleIndicator(
+                    modifier = Modifier.padding(vertical = basicMargin())
+                )
             }
         }
     } else if (uiState.errors != null) {
