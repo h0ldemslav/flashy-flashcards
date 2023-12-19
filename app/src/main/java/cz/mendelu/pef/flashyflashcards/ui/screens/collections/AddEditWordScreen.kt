@@ -63,7 +63,6 @@ fun AddEditWordScreen(
             BottomBar(navController = navController)
         },
         onBackClick = {
-            viewModel.closeTranslator()
             navController.popBackStack()
         },
         actions = {

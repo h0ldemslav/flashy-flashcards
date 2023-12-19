@@ -56,6 +56,7 @@ fun WordsScreen(
            BottomBar(navController = navController)
         },
         onBackClick = {
+            viewModel.closeAndResetTranslator()
             navController.currentBackStackEntry
                 ?.savedStateHandle
                 ?.remove<String>(savedStateHandleKey)

@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import cz.mendelu.pef.flashyflashcards.architecture.BaseViewModel
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordCollectionsRepository
-import cz.mendelu.pef.flashyflashcards.mlkit.MLKitTranslator
+import cz.mendelu.pef.flashyflashcards.mlkit.MLKitTranslateManager
 import cz.mendelu.pef.flashyflashcards.model.UiState
 import cz.mendelu.pef.flashyflashcards.model.Word
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WordsScreenViewModel @Inject constructor(
     private val wordCollectionsRepository: WordCollectionsRepository,
-    private val mlKitTranslator: MLKitTranslator
+    private val mlKitTranslateManager: MLKitTranslateManager
 ) : BaseViewModel() {
 
     var uiState by mutableStateOf(UiState<List<Word>, ScreenErrors>(loading = true))
@@ -26,7 +26,7 @@ class WordsScreenViewModel @Inject constructor(
             wordCollectionsRepository.getWordCollectionAndWordsById(wordCollectionId)
                 .collect { entity ->
                     if (entity != null) {
-                        mlKitTranslator.setLanguages(
+                        mlKitTranslateManager.setSourceAndTargetLanguages(
                             entity.wordCollectionEntity.sourceLanguage,
                             entity.wordCollectionEntity.targetLanguage
                         )
@@ -39,5 +39,10 @@ class WordsScreenViewModel @Inject constructor(
                     }
             }
         }
+    }
+
+    fun closeAndResetTranslator() {
+        mlKitTranslateManager.closeTranslator()
+        mlKitTranslateManager.resetTranslator()
     }
 }

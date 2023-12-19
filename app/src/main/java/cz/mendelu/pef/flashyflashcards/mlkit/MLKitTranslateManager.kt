@@ -10,7 +10,9 @@ import cz.mendelu.pef.flashyflashcards.extensions.getTitleCase
 import java.lang.IllegalArgumentException
 import java.lang.NullPointerException
 
-class MLKitTranslator {
+class TranslateSourceTargetLanguagesException(message: String): Exception(message)
+
+class MLKitTranslateManager {
 
     private var languages: Map<String, String> = mapOf()
     private var sourceLang: String? = null
@@ -18,7 +20,7 @@ class MLKitTranslator {
     private var translator: Translator? = null
 
     init {
-        setMapOfLanguages()
+        createMapOfAvailableLanguages()
     }
 
     fun setTranslator(
@@ -26,9 +28,7 @@ class MLKitTranslator {
         onDownloadFailure: (() -> Unit)?
     ) {
         if (sourceLang == null || targetLang == null) {
-            // TODO: handle sourceLang and targetLang nullability
-            // TODO: When using this method in viewmodels, don't forget to try/catch
-            throw Exception()
+            throw TranslateSourceTargetLanguagesException("Source and target languages cannot be null.")
         }
 
         val options = TranslatorOptions.Builder()
@@ -54,10 +54,17 @@ class MLKitTranslator {
                 }
 
                 Log.e(
-                    "MLKitTranslator",
+                    "MLKitTranslateManager",
                     "Failed to download model: ${it.message}"
                 )
             }
+    }
+
+    /**
+     * Resets [Translator] instance to null.
+     */
+    fun resetTranslator() {
+        translator = null
     }
 
     fun translate(
@@ -76,21 +83,31 @@ class MLKitTranslator {
         }
     }
 
-    fun releaseTranslator() {
-        // According to MLKit docs: Closes the translator and releases its resources.
+    /**
+    * Closes the translator and releases its resources.
+    */
+    fun closeTranslator() {
         translator?.close()
     }
 
-    fun setLanguages(source: String, target: String) {
+    fun isTranslatorNull(): Boolean {
+        return translator == null
+    }
+
+    fun setSourceAndTargetLanguages(source: String, target: String) {
         sourceLang = languages[source]
         targetLang = languages[target]
     }
 
-    fun getMapOfLanguages(): Map<String, String> {
+    fun getSourceAndTargetLanguages(): Pair<String?, String?> {
+        return Pair(sourceLang, targetLang)
+    }
+
+    fun getMapOfAvailableLanguages(): Map<String, String> {
         return languages
     }
 
-    private fun setMapOfLanguages() {
+    private fun createMapOfAvailableLanguages() {
         val languageCodes = TranslateLanguage.getAllLanguages()
         val fullNamesAndCodes = mutableMapOf<String, String>()
         val members = TranslateLanguage::class.java.fields
@@ -114,7 +131,7 @@ class MLKitTranslator {
             } catch (e: ExceptionInInitializerError) {
                 Log.e(null, e.message, e)
             } catch (e: Exception) {
-                Log.e(null, "MLKit Translator Exception: ${e.message ?: "unknown exception"}")
+                Log.e(null, "MLKitTranslateManager Exception: ${e.message ?: "unknown exception"}")
             }
         }
 

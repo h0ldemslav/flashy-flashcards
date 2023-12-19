@@ -9,5 +9,4 @@ interface AddEditWordScreenActions {
     fun saveWord(word: Word)
     fun deleteWord(word: Word)
     fun translateWord(word: Word)
-    fun closeTranslator()
 }
