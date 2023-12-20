@@ -88,8 +88,11 @@ fun AddEditWordCollectionScreen(
         )
 
         if (isRemoveCollectionDialogOpened) {
-            BasicAlertDialog(onDismissRequest = {
-                isRemoveCollectionDialogOpened = false
+            BasicAlertDialog(
+                title = stringResource(id = R.string.collection_dialog_title),
+                body = stringResource(id = R.string.collection_dialog_content),
+                onDismissRequest = {
+                    isRemoveCollectionDialogOpened = false
             }) {
                 isRemoveCollectionDialogOpened = false
 

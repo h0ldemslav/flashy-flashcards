@@ -23,6 +23,8 @@ import cz.mendelu.pef.flashyflashcards.ui.theme.halfMargin
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BasicAlertDialog(
+    title: String,
+    body: String,
     onDismissRequest: () -> Unit,
     onDeleteButtonClick: () -> Unit
 ) {
@@ -39,13 +41,13 @@ fun BasicAlertDialog(
                     .padding(basicMargin())
             ) {
                 Text(
-                    text = stringResource(id = R.string.collection_dialog_title),
+                    text = title,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = halfMargin())
                 )
 
                 Text(
-                    text = stringResource(id = R.string.collection_dialog_content),
+                    text = body,
                     style = MaterialTheme.typography.bodyMedium
                 )
 
