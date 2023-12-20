@@ -37,6 +37,7 @@ import cz.mendelu.pef.flashyflashcards.ui.elements.LoadingScreenCircleIndicator
 import cz.mendelu.pef.flashyflashcards.ui.elements.PlaceholderElement
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
+import cz.mendelu.pef.flashyflashcards.ui.theme.halfMargin
 
 @CollectionsNavGraph
 @Destination
@@ -175,6 +176,13 @@ fun AddEditWordScreenContent(
                     Text(text = stringResource(id = R.string.save_label))
                 }
             }
+
+            Text(
+                text = stringResource(id = R.string.translate_note),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.padding(vertical = halfMargin())
+            )
 
             if (uiState.loading) {
                 LoadingScreenCircleIndicator(

@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import cz.mendelu.pef.flashyflashcards.model.WordEntity
+import cz.mendelu.pef.flashyflashcards.model.entities.WordEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

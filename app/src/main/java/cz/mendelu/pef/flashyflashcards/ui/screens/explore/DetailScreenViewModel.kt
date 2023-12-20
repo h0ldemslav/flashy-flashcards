@@ -8,7 +8,7 @@ import cz.mendelu.pef.flashyflashcards.architecture.BaseViewModel
 import cz.mendelu.pef.flashyflashcards.database.businesses.BusinessesRepository
 import cz.mendelu.pef.flashyflashcards.model.UiState
 import cz.mendelu.pef.flashyflashcards.model.Business
-import cz.mendelu.pef.flashyflashcards.model.BusinessEntity
+import cz.mendelu.pef.flashyflashcards.model.entities.BusinessEntity
 import cz.mendelu.pef.flashyflashcards.model.DataSourceType
 import cz.mendelu.pef.flashyflashcards.model.DataSourceType.Local
 import cz.mendelu.pef.flashyflashcards.model.DataSourceType.Remote

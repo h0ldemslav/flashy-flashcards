@@ -1,7 +1,8 @@
-package cz.mendelu.pef.flashyflashcards.model
+package cz.mendelu.pef.flashyflashcards.model.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import cz.mendelu.pef.flashyflashcards.model.Business
 
 @Entity(tableName = "businesses")
 data class BusinessEntity(

@@ -1,8 +1,8 @@
 package cz.mendelu.pef.flashyflashcards.database.wordcollections
 
 import cz.mendelu.pef.flashyflashcards.model.WordCollection
-import cz.mendelu.pef.flashyflashcards.model.WordCollectionEntity
-import cz.mendelu.pef.flashyflashcards.model.WordCollectionEntityWithWordEntities
+import cz.mendelu.pef.flashyflashcards.model.entities.WordCollectionEntity
+import cz.mendelu.pef.flashyflashcards.model.entities.WordCollectionEntityWithWordEntities
 import kotlinx.coroutines.flow.Flow
 
 interface WordCollectionsRepository {

@@ -1,8 +1,9 @@
-package cz.mendelu.pef.flashyflashcards.model
+package cz.mendelu.pef.flashyflashcards.model.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import cz.mendelu.pef.flashyflashcards.model.Word
 
 @Entity(
     tableName = "word_collection_words",

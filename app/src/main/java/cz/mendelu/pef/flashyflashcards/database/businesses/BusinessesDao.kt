@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import cz.mendelu.pef.flashyflashcards.model.BusinessEntity
+import cz.mendelu.pef.flashyflashcards.model.entities.BusinessEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -1,5 +1,6 @@
 package cz.mendelu.pef.flashyflashcards.model
 
+import cz.mendelu.pef.flashyflashcards.model.entities.WordEntity
 import java.io.Serializable
 
 // `Word` can be Serializable, since it won't be too big

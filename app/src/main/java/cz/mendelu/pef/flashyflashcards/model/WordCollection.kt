@@ -1,5 +1,7 @@
 package cz.mendelu.pef.flashyflashcards.model
 
+import cz.mendelu.pef.flashyflashcards.model.entities.WordCollectionEntity
+
 data class WordCollection(
     var id: Long? = null,
     var name: String,

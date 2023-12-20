@@ -1,4 +1,4 @@
-package cz.mendelu.pef.flashyflashcards.model
+package cz.mendelu.pef.flashyflashcards.model.entities
 
 import androidx.room.Embedded
 import androidx.room.Relation

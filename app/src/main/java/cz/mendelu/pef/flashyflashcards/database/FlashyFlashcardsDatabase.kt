@@ -7,9 +7,9 @@ import androidx.room.RoomDatabase
 import cz.mendelu.pef.flashyflashcards.database.businesses.BusinessesDao
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordCollectionsDao
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordsDao
-import cz.mendelu.pef.flashyflashcards.model.BusinessEntity
-import cz.mendelu.pef.flashyflashcards.model.WordCollectionEntity
-import cz.mendelu.pef.flashyflashcards.model.WordEntity
+import cz.mendelu.pef.flashyflashcards.model.entities.BusinessEntity
+import cz.mendelu.pef.flashyflashcards.model.entities.WordCollectionEntity
+import cz.mendelu.pef.flashyflashcards.model.entities.WordEntity
 
 @Database(
     entities = [

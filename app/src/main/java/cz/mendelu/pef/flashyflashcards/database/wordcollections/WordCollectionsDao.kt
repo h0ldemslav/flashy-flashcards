@@ -6,8 +6,8 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import cz.mendelu.pef.flashyflashcards.model.WordCollectionEntity
-import cz.mendelu.pef.flashyflashcards.model.WordCollectionEntityWithWordEntities
+import cz.mendelu.pef.flashyflashcards.model.entities.WordCollectionEntity
+import cz.mendelu.pef.flashyflashcards.model.entities.WordCollectionEntityWithWordEntities
 import kotlinx.coroutines.flow.Flow
 
 @Dao

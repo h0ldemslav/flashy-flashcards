@@ -64,4 +64,5 @@
     <string name="words_translation_error">Translation must not be empty</string>
     <string name="failed_to_translate_word">Failed to translate, try again</string>
     <string name="failed_to_download_language_model">Failed to download translator, try again</string>
+    <string name="translate_note">NOTE: To translate a word with MLKit, you must download the translator (Wi-Fi is required).</string>
 </resources>

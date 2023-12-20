@@ -1,5 +1,7 @@
 package cz.mendelu.pef.flashyflashcards.model
 
+import cz.mendelu.pef.flashyflashcards.model.entities.BusinessEntity
+
 data class Business(
     var id: Long? = null,
     var remoteId: String,
