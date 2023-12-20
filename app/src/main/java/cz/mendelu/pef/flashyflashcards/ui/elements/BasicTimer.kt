@@ -1,0 +1,25 @@
+package cz.mendelu.pef.flashyflashcards.ui.elements
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
+
+@Composable
+fun BasicTimer(
+    totalTimeInMillis: Long,
+    onTimeChange: (Long) -> Unit
+) {
+    LaunchedEffect(totalTimeInMillis) {
+        if (totalTimeInMillis > 0) {
+            delay(100L)
+            onTimeChange(totalTimeInMillis)
+        }
+    }
+
+    Text(
+        text = (totalTimeInMillis / 1000L).toString(),
+        style = MaterialTheme.typography.titleMedium
+    )
+}

@@ -15,9 +15,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TrainingScreenViewModel @Inject constructor(
+class FlashcardPracticeScreenViewModel @Inject constructor(
     private val wordCollectionsRepository: WordCollectionsRepository
-) : BaseViewModel(), TrainingScreenActions {
+) : BaseViewModel(), FlashcardPracticeScreenActions {
 
     var uiState by mutableStateOf(UiState<Word, ScreenErrors>())
     private var fetchedListOfWords: List<Word> = emptyList()
@@ -88,12 +88,14 @@ class TrainingScreenViewModel @Inject constructor(
                 data = fetchedListOfWords[currentWordIndex]
             )
         } else {
+            // Practice finished
             uiState = UiState()
         }
     }
 
     override fun resetWordToTheFirst() {
         currentWordIndex = 0
+        fetchedListOfWords = fetchedListOfWords.shuffled()
 
         uiState = UiState(
             data = fetchedListOfWords.firstOrNull()

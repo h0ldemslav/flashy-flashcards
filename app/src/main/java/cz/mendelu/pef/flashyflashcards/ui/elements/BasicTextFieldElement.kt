@@ -15,6 +15,7 @@ fun BasicTextFieldElement(
     onValueChange: (String) -> Unit,
     label: String,
     supportingText: String? = null,
+    enabled: Boolean = true,
     errorMessage: String? = null,
     onDone: (() -> Unit)? = null
 ) {
@@ -36,6 +37,7 @@ fun BasicTextFieldElement(
             }
         },
         singleLine = true,
+        enabled = enabled,
         keyboardActions = KeyboardActions(onDone = {
             if (onDone != null) {
                 onDone()

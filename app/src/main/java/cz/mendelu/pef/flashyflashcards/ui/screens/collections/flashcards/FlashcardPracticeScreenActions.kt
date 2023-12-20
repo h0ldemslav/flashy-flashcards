@@ -1,6 +1,6 @@
 package cz.mendelu.pef.flashyflashcards.ui.screens.collections.flashcards
 
-interface TrainingScreenActions {
+interface FlashcardPracticeScreenActions {
 
     fun isAnswerCorrect(answer: String): Boolean
     fun setNextWord()

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material3.FloatingActionButton
@@ -19,6 +20,7 @@ import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.navigate
 import cz.mendelu.pef.flashyflashcards.R
+import cz.mendelu.pef.flashyflashcards.model.FlashcardPracticeType
 import cz.mendelu.pef.flashyflashcards.model.UiState
 import cz.mendelu.pef.flashyflashcards.model.Word
 import cz.mendelu.pef.flashyflashcards.navigation.bottombar.BottomBar
@@ -29,7 +31,7 @@ import cz.mendelu.pef.flashyflashcards.ui.elements.PlaceholderElement
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
 import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.AddEditWordCollectionScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.AddEditWordScreenDestination
-import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.TrainingScreenDestination
+import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.FlashcardPracticeScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
 
 @CollectionsNavGraph
@@ -94,11 +96,30 @@ fun WordsScreen(
             }
 
             IconButton(onClick = {
-                navController.navigate(TrainingScreenDestination(collectionId = collectionId))
+                navController.navigate(
+                    FlashcardPracticeScreenDestination(
+                        collectionId = collectionId,
+                        flashcardPracticeType = FlashcardPracticeType.Training
+                    )
+                )
             }) {
                 Icon(
                     imageVector = Icons.Default.Quiz,
                     contentDescription = stringResource(id = R.string.training_label)
+                )
+            }
+
+            IconButton(onClick = {
+                navController.navigate(
+                    FlashcardPracticeScreenDestination(
+                        collectionId = collectionId,
+                        flashcardPracticeType = FlashcardPracticeType.Test
+                    )
+                )
+            }) {
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = stringResource(id = R.string.test_label)
                 )
             }
         }
