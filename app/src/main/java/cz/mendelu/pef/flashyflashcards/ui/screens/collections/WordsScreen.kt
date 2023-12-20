@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +29,7 @@ import cz.mendelu.pef.flashyflashcards.ui.elements.PlaceholderElement
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
 import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.AddEditWordCollectionScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.AddEditWordScreenDestination
+import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.TrainingScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
 
 @CollectionsNavGraph
@@ -40,7 +42,9 @@ fun WordsScreen(
     collectionName: String
 ) {
     LaunchedEffect(Unit) {
-        viewModel.getAllWordCollectionWords(collectionId)
+        if (viewModel.uiState.data == null) {
+            viewModel.getAllWordCollectionWords(collectionId)
+        }
     }
 
     val savedStateHandleKey = "updated_collection_name"
@@ -86,6 +90,15 @@ fun WordsScreen(
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = stringResource(id = R.string.edit_label)
+                )
+            }
+
+            IconButton(onClick = {
+                navController.navigate(TrainingScreenDestination(collectionId = collectionId))
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Quiz,
+                    contentDescription = stringResource(id = R.string.training_label)
                 )
             }
         }
