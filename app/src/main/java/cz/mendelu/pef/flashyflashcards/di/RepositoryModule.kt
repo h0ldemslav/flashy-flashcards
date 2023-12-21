@@ -3,6 +3,9 @@ package cz.mendelu.pef.flashyflashcards.di
 import cz.mendelu.pef.flashyflashcards.database.businesses.BusinessesDao
 import cz.mendelu.pef.flashyflashcards.database.businesses.BusinessesRepositoryImpl
 import cz.mendelu.pef.flashyflashcards.database.businesses.BusinessesRepository
+import cz.mendelu.pef.flashyflashcards.database.wordcollections.TestHistoryDao
+import cz.mendelu.pef.flashyflashcards.database.wordcollections.TestHistoryRepository
+import cz.mendelu.pef.flashyflashcards.database.wordcollections.TestHistoryRepositoryImpl
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordCollectionsDao
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordCollectionsRepository
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordCollectionsRepositoryImpl
@@ -40,6 +43,11 @@ object RepositoryModule {
     @Singleton
     fun provideWordsRepository(dao: WordsDao): WordsRepository =
         WordsRepositoryImpl(dao)
+
+    @Provides
+    @Singleton
+    fun provideTestHistoryRepository(dao: TestHistoryDao): TestHistoryRepository =
+        TestHistoryRepositoryImpl(dao)
 
     @Provides
     @Singleton

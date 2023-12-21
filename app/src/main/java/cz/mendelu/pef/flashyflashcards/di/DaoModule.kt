@@ -23,6 +23,11 @@ object DaoModule {
 
     @Provides
     @Singleton
+    fun provideTestHistoryDao(flashyFlashcardsDatabase: FlashyFlashcardsDatabase) =
+        flashyFlashcardsDatabase.testHistoryDao()
+
+    @Provides
+    @Singleton
     fun provideBusinessesDao(flashyFlashcardsDatabase: FlashyFlashcardsDatabase) =
         flashyFlashcardsDatabase.businessesDao()
 }
