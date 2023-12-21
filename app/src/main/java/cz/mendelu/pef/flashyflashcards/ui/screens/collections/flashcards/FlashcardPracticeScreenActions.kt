@@ -4,5 +4,7 @@ interface FlashcardPracticeScreenActions {
 
     fun isAnswerCorrect(answer: String): Boolean
     fun setNextWord()
-    fun resetWordToTheFirst()
+    fun setAnswer(answer: String)
+    fun setFlashcardText()
+    fun resetFlashcard()
 }

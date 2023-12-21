@@ -4,11 +4,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import kotlinx.coroutines.delay
 
 @Composable
 fun BasicTimer(
+    modifier: Modifier = Modifier,
     totalTimeInMillis: Long,
+    textAlign: TextAlign = TextAlign.End,
     onTimeChange: (Long) -> Unit
 ) {
     LaunchedEffect(totalTimeInMillis) {
@@ -20,6 +24,8 @@ fun BasicTimer(
 
     Text(
         text = (totalTimeInMillis / 1000L).toString(),
-        style = MaterialTheme.typography.titleMedium
+        textAlign = textAlign,
+        style = MaterialTheme.typography.titleMedium,
+        modifier = modifier
     )
 }

@@ -3,6 +3,7 @@ package cz.mendelu.pef.flashyflashcards.ui.screens.collections.flashcards
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,7 +28,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import cz.mendelu.pef.flashyflashcards.R
 import cz.mendelu.pef.flashyflashcards.model.FlashcardPracticeType
 import cz.mendelu.pef.flashyflashcards.model.UiState
-import cz.mendelu.pef.flashyflashcards.model.Word
 import cz.mendelu.pef.flashyflashcards.navigation.graphs.CollectionsNavGraph
 import cz.mendelu.pef.flashyflashcards.ui.elements.BasicScaffold
 import cz.mendelu.pef.flashyflashcards.ui.elements.BasicTextFieldElement
@@ -75,24 +75,12 @@ fun FlashcardPracticeScreen(
 @Composable
 fun FlashcardPracticeScreenContent(
     paddingValues: PaddingValues,
-    uiState: UiState<Word, ScreenErrors>,
+    uiState: UiState<FlashcardPracticeScreenData, ScreenErrors>,
     actions: FlashcardPracticeScreenActions,
     flashcardPracticeType: FlashcardPracticeType
 ) {
-    var flashcardText by remember {
-        mutableStateOf("")
-    }
-    var answer by remember {
-        mutableStateOf("")
-    }
     var timer by remember {
         mutableStateOf(15000L)
-    }
-
-    uiState.data?.let { word ->
-        if (flashcardText.isEmpty()) {
-            flashcardText = word.name
-        }
     }
 
     val finishedText = if (flashcardPracticeType == FlashcardPracticeType.Test) {
@@ -110,7 +98,11 @@ fun FlashcardPracticeScreenContent(
             .padding(basicMargin())
             .padding(top = basicMargin())
     ) {
-        if (uiState.data != null) {
+        if (uiState.data != null && uiState.data?.finish == false) {
+            val answer = uiState.data!!.answer
+            val flashcardText = uiState.data!!.flashcardText
+            val currentWordNumber = uiState.data!!.currentWordNumber
+            val totalWordsNumber = uiState.data!!.words.size
 
             if (flashcardPracticeType == FlashcardPracticeType.Test) {
                 Practice(
@@ -119,14 +111,13 @@ fun FlashcardPracticeScreenContent(
                     onFlashcardClick = null,
                     answer = answer,
                     answerSupportingText = null,
-                    onAnswerChange = { answer = it },
+                    onAnswerChange = { actions.setAnswer(it) },
                     timer = timer,
                     onTimerUpdate = { timer = it - 100L },
+                    wordCount = "${currentWordNumber}/${totalWordsNumber}",
                     actionButtonLabel = stringResource(id = R.string.next_label)
                 ) {
                     actions.setNextWord()
-                    answer = ""
-                    flashcardText = ""
                     // Reset timer for new card (word)
                     timer = 15000L
                 }
@@ -134,25 +125,17 @@ fun FlashcardPracticeScreenContent(
                 Practice(
                     uiState = uiState,
                     flashcardText = flashcardText,
-                    onFlashcardClick = {
-                        flashcardText = if (flashcardText == uiState.data!!.name) {
-                            uiState.data!!.translation
-                        } else {
-                            uiState.data!!.name
-                        }
-                    },
+                    onFlashcardClick = { actions.setFlashcardText() },
                     answer = answer,
                     answerSupportingText = stringResource(id = R.string.flashcard_hint),
-                    onAnswerChange = { answer = it },
+                    onAnswerChange = { actions.setAnswer(it) },
                     timer = null,
                     onTimerUpdate = null,
                     actionButtonLabel = stringResource(id = R.string.next_label)
                 ) {
+                    // User should answer correctly
                     if (actions.isAnswerCorrect(answer)) {
-                        // User should answer correctly
                         actions.setNextWord()
-                        answer = ""
-                        flashcardText = ""
                     }
                 }
             }
@@ -165,7 +148,7 @@ fun FlashcardPracticeScreenContent(
             )
 
             Button(onClick = {
-                actions.resetWordToTheFirst()
+                actions.resetFlashcard()
             }) {
                 Text(text = stringResource(id = R.string.repeat_label))
             }
@@ -180,7 +163,7 @@ fun FlashcardPracticeScreenContent(
 
 @Composable
 fun Practice(
-    uiState: UiState<Word, ScreenErrors>?,
+    uiState: UiState<FlashcardPracticeScreenData, ScreenErrors>?,
     flashcardText: String,
     onFlashcardClick: (() -> Unit)?,
     answer: String,
@@ -188,13 +171,29 @@ fun Practice(
     onAnswerChange: (String) -> Unit,
     timer: Long?,
     onTimerUpdate: ((Long) -> Unit)?,
+    wordCount: String? = null,
     actionButtonLabel: String,
     onActionButtonClick: () -> Unit
 ) {
-    if (timer != null) {
-        BasicTimer(totalTimeInMillis = timer) {
-            if (onTimerUpdate != null) {
-                onTimerUpdate(it)
+    Row(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        if (wordCount != null) {
+            Text(
+                text = wordCount,
+                modifier = Modifier.weight(0.5f),
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
+
+        if (timer != null) {
+            BasicTimer(
+                totalTimeInMillis = timer,
+                modifier = Modifier.weight(0.5f)
+            ) {
+                if (onTimerUpdate != null) {
+                    onTimerUpdate(it)
+                }
             }
         }
     }

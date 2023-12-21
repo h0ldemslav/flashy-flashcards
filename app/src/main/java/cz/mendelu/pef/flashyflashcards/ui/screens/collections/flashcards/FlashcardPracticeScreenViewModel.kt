@@ -19,9 +19,7 @@ class FlashcardPracticeScreenViewModel @Inject constructor(
     private val wordCollectionsRepository: WordCollectionsRepository
 ) : BaseViewModel(), FlashcardPracticeScreenActions {
 
-    var uiState by mutableStateOf(UiState<Word, ScreenErrors>())
-    private var fetchedListOfWords: List<Word> = emptyList()
-    private var currentWordIndex: Int = 0
+    var uiState by mutableStateOf(UiState<FlashcardPracticeScreenData, ScreenErrors>())
 
     fun getAllCollectionWords(collectionId: Long?) {
         val errors = if (collectionId == null) {
@@ -43,12 +41,16 @@ class FlashcardPracticeScreenViewModel @Inject constructor(
                 wordCollectionsRepository.getWordCollectionAndWordsById(collectionId)
                     .collect { entity ->
                         if (entity != null) {
-                            fetchedListOfWords = entity.wordEntities
+                            val words = entity.wordEntities
                                 .map { Word.createFromWordEntity(it) }
                                 .shuffled()
+                            val firstWord = words.firstOrNull()
 
                             uiState = UiState(
-                                data = fetchedListOfWords.firstOrNull()
+                                data = FlashcardPracticeScreenData(
+                                    flashcardText = firstWord?.name ?: "",
+                                    words = words
+                                )
                             )
                         }
                 }
@@ -57,48 +59,90 @@ class FlashcardPracticeScreenViewModel @Inject constructor(
     }
 
     override fun isAnswerCorrect(answer: String): Boolean {
-        val processedAnswer = answer
-            .trim()
-            .getTitleCase()
+        uiState.data?.let { data ->
+            val processedAnswer = answer
+                .trim()
+                .getTitleCase()
 
-        val errors = if (processedAnswer != uiState.data?.translation) {
-            ScreenErrors(
-                imageRes = null,
-                messageRes = R.string.incorrect_answer
+            val correctAnswer = data.words[data.currentWordNumber].translation
+
+            val errors = if (processedAnswer != correctAnswer) {
+                ScreenErrors(
+                    imageRes = null,
+                    messageRes = R.string.incorrect_answer
+                )
+            } else {
+                null
+            }
+
+            uiState = UiState(
+                data = uiState.data,
+                errors = errors
             )
-        } else {
-            null
+
+            return errors == null
+        }
+
+        return false
+    }
+
+    override fun setNextWord() {
+        uiState.data?.let { data ->
+            val next = data.currentWordNumber + 1
+            val wordsSize = data.words.size
+
+            if (next != wordsSize) {
+                data.answer = ""
+                data.currentWordNumber = next
+                data.flashcardText = data.words[next].name
+            } else {
+                // Each word was in a flashcard, so finish practising.
+                data.finish = true
+            }
+
+            uiState = UiState(data = data)
+        }
+    }
+
+    override fun setAnswer(answer: String) {
+        uiState.data?.let { data ->
+            data.answer = answer
         }
 
         uiState = UiState(
             data = uiState.data,
-            errors = errors
+            errors = uiState.errors
         )
-
-        return errors == null
     }
 
-    override fun setNextWord() {
-        val next = currentWordIndex + 1
+    override fun setFlashcardText() {
+        uiState.data?.let { data ->
+            val currentWord = data.words[data.currentWordNumber]
 
-        if (next != fetchedListOfWords.size) {
-            currentWordIndex = next
-
-            uiState = UiState(
-                data = fetchedListOfWords[currentWordIndex]
-            )
-        } else {
-            // Practice finished
-            uiState = UiState()
+            data.flashcardText = if (data.flashcardText == currentWord.name) {
+                currentWord.translation
+            } else {
+                currentWord.name
+            }
         }
-    }
-
-    override fun resetWordToTheFirst() {
-        currentWordIndex = 0
-        fetchedListOfWords = fetchedListOfWords.shuffled()
 
         uiState = UiState(
-            data = fetchedListOfWords.firstOrNull()
+            data = uiState.data,
+            errors = uiState.errors
+        )
+    }
+
+    override fun resetFlashcard() {
+        uiState.data?.let { data ->
+            data.answer = ""
+            data.currentWordNumber = 0
+            data.words = data.words.shuffled()
+            data.flashcardText = data.words[0].name
+            data.finish = false
+        }
+
+        uiState = UiState(
+            data = uiState.data
         )
     }
 }
