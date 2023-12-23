@@ -7,6 +7,7 @@ import cz.mendelu.pef.flashyflashcards.R
 import cz.mendelu.pef.flashyflashcards.architecture.BaseViewModel
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.TestHistoryRepository
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordCollectionsRepository
+import cz.mendelu.pef.flashyflashcards.extensions.getTitleCase
 import cz.mendelu.pef.flashyflashcards.model.FlashcardAnswer
 import cz.mendelu.pef.flashyflashcards.model.TestHistory
 import cz.mendelu.pef.flashyflashcards.model.UiState
@@ -24,11 +25,9 @@ class FlashcardPracticeScreenViewModel @Inject constructor(
 ) : BaseViewModel(), FlashcardPracticeScreenActions {
 
     var uiState by mutableStateOf(UiState<FlashcardPracticeScreenData, ScreenErrors>())
-    private var testHistory: TestHistory? = TestHistory(wordCollectionId = null)
+    private var testHistory: TestHistory? = null
 
     fun getAllCollectionWords(collectionId: Long?) {
-        testHistory?.wordCollectionId = collectionId
-
         val errors = if (collectionId == null) {
             ScreenErrors(
                 imageRes = null,
@@ -68,28 +67,24 @@ class FlashcardPracticeScreenViewModel @Inject constructor(
     override fun isAnswerCorrect(answer: String): Boolean {
         uiState.data?.let { data ->
             val processedAnswer = answer
+                .getTitleCase()
                 .trim()
-                .lowercase()
 
             val correctAnswer = data.words[data.currentWordNumber].translation
+                .getTitleCase()
                 .trim()
-                .lowercase()
 
-            val errors = if (processedAnswer != correctAnswer) {
-                ScreenErrors(
-                    imageRes = null,
-                    messageRes = R.string.incorrect_answer
-                )
+            data.error = if (processedAnswer != correctAnswer) {
+                R.string.incorrect_answer
             } else {
                 null
             }
 
             uiState = UiState(
-                data = uiState.data,
-                errors = errors
+                data = uiState.data
             )
 
-            return errors == null
+            return data.error == null
         }
 
         return false
@@ -97,12 +92,6 @@ class FlashcardPracticeScreenViewModel @Inject constructor(
 
     override fun setNextWord() {
         uiState.data?.let { data ->
-            testHistory?.answers?.add(
-                FlashcardAnswer(
-                    data.answer, data.words[data.currentWordNumber]
-                )
-            )
-
             val next = data.currentWordNumber + 1
             val wordsSize = data.words.size
 
@@ -113,6 +102,7 @@ class FlashcardPracticeScreenViewModel @Inject constructor(
             } else {
                 // Each word was in a flashcard, so finish practising.
                 data.finish = true
+                testHistory?.dateOfCompletion = System.currentTimeMillis()
             }
 
             uiState = UiState(data = data)
@@ -156,38 +146,50 @@ class FlashcardPracticeScreenViewModel @Inject constructor(
             data.finish = false
         }
 
-        testHistory = testHistory?.copy(
-            answers = mutableListOf(),
-            timeTaken = 0L,
-            dateOfCompletion = 0L
-        )
+        if (testHistory != null) {
+            testHistory = testHistory?.copy(
+                answers = mutableListOf(),
+                timeTaken = 0L,
+                dateOfCompletion = 0L
+            )
+        }
 
         uiState = UiState(
             data = uiState.data
         )
     }
 
-    override fun turnOffTestHistory() {
-        testHistory = null
+    override fun setTestHistory(collectionId: Long?) {
+        testHistory = TestHistory(wordCollectionId = collectionId)
     }
 
-    override fun updateTimeTakenInTestHistory(timeTaken: Long) {
+    override fun updateTestHistory(flashcardAnswer: FlashcardAnswer, timeTaken: Long) {
         testHistory?.let { history ->
             history.timeTaken += timeTaken
+
+            // This is needed in order to compare correctness of the user's answer
+            flashcardAnswer.answer = flashcardAnswer.answer
+                .getTitleCase()
+                .trim()
+            flashcardAnswer.word.name = flashcardAnswer.word.name
+                .getTitleCase()
+                .trim()
+            flashcardAnswer.word.translation = flashcardAnswer.word.translation
+                .getTitleCase()
+                .trim()
+            history.answers.add(flashcardAnswer)
         }
     }
 
     override fun saveTestHistory() {
         testHistory?.let { history ->
-            history.dateOfCompletion = System.currentTimeMillis()
-
             val testHistoryEntity = TestHistoryEntity.createFromTestHistory(history)
 
             launch {
                 testHistoryRepository.createNewTestHistory(testHistoryEntity)
             }
 
-            // turnOffTestHistory()
+            setTestHistory(history.wordCollectionId)
         }
     }
 

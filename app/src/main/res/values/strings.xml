@@ -75,5 +75,12 @@
     <string name="training_finished">Training finished!</string>
     <string name="test_finished">Test finished!</string>
     <string name="repeat_label">Repeat</string>
-    <string name="save_test_summary_label">Save summary</string>
+    <string name="save_test_history_label">Save and repeat</string>
+    <string name="number_of_correct_answers">Number of correct answers</string>
+    <string name="date_of_completion">Date of completion</string>
+    <string name="time_taken">Time taken</string>
+    <string name="seconds">seconds</string>
+    <string name="word">Word</string>
+    <string name="correct_answer">Correct answer</string>
+    <string name="your_answer">Your answer</string>
 </resources>

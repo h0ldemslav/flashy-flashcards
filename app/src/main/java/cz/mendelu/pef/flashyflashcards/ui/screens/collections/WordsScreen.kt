@@ -13,11 +13,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.navigate
@@ -45,7 +45,8 @@ fun WordsScreen(
     collectionId: Long?,
     collectionName: String
 ) {
-    val testAnswerLength by viewModel.getTestAnswerLength().collectAsState(initial = 0L)
+    val testAnswerLength by viewModel.getTestAnswerLength()
+        .collectAsStateWithLifecycle(initialValue = 0L)
 
     LaunchedEffect(Unit) {
         if (viewModel.uiState.data == null) {

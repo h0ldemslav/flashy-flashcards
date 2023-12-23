@@ -138,4 +138,7 @@ dependencies {
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     kapt("androidx.room:room-compiler:2.4.3")
     implementation("androidx.room:room-runtime:2.4.3")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
 }
+
