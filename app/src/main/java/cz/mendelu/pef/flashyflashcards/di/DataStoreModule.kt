@@ -1,5 +1,6 @@
 package cz.mendelu.pef.flashyflashcards.di
 
+import com.google.gson.Gson
 import cz.mendelu.pef.flashyflashcards.FlashyFlashcardsApplication
 import cz.mendelu.pef.flashyflashcards.datastore.DataStoreRepository
 import cz.mendelu.pef.flashyflashcards.datastore.DataStoreRepositoryImpl
@@ -15,6 +16,6 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    fun provideDataStoreRepository(): DataStoreRepository =
-        DataStoreRepositoryImpl(FlashyFlashcardsApplication.appContext)
+    fun provideDataStoreRepository(gson: Gson): DataStoreRepository =
+        DataStoreRepositoryImpl(FlashyFlashcardsApplication.appContext, gson)
 }
