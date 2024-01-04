@@ -20,6 +20,7 @@ class MainActivityViewModel @Inject constructor(
     val startNavGraph: MutableState<NavGraphSpec> = mutableStateOf(NavGraphs.root)
     val isLoading: MutableState<Boolean> = mutableStateOf(true)
     val isDarkTheme: MutableState<Boolean> = mutableStateOf(false)
+    val language: MutableState<String> = mutableStateOf(AppPreferenceConstants.LANG_EN)
 
     init {
         launch {
@@ -35,7 +36,9 @@ class MainActivityViewModel @Inject constructor(
         launch {
             dataStoreRepository.getAppPreferences().collect { preferences ->
                 val theme = preferences.find { it.name == AppPreferenceConstants.THEME }
+                val languagePreference = preferences.find { it.name == AppPreferenceConstants.LANG }
 
+                language.value = languagePreference?.value ?: AppPreferenceConstants.LANG_EN
                 isDarkTheme.value = theme?.value == AppPreferenceConstants.THEME_DARK
                 isLoading.value = false
             }

@@ -256,7 +256,7 @@ fun FlashcardPractice(
     ElevatedButton(onClick = {
         onActionButtonClick()
     }) {
-        Text(text = "Next")
+        Text(text = stringResource(id = R.string.next_label))
     }
 }
 

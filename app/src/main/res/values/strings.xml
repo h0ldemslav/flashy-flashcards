@@ -102,4 +102,10 @@
     <string name="app_language">App language</string>
     <string name="app_theme">App theme</string>
     <string name="test_answer_length">Test answer length</string>
+    <string name="all_categories">All</string>
+    <string name="language_schools_category">Language Schools</string>
+    <string name="libraries_category">Libraries</string>
+    <string name="cultural_centers_category">Cultural Centers</string>
+    <string name="museums_category">Museums</string>
+    <string name="art_galleries_category">Art Galleries</string>
 </resources>

@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import cz.mendelu.pef.flashyflashcards.navigation.DestinationsNavHostWrapper
 import cz.mendelu.pef.flashyflashcards.ui.theme.FlashyFlashcardsTheme
+import cz.mendelu.pef.flashyflashcards.utils.LocaleUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,6 +29,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             FlashyFlashcardsTheme(mainActivityViewModel.isDarkTheme.value) {
+                LocaleUtils.setLocale(LocalContext.current, mainActivityViewModel.language.value)
+
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
