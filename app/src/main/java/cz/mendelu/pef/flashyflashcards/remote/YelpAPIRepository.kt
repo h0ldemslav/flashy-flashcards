@@ -8,8 +8,12 @@ import cz.mendelu.pef.flashyflashcards.model.YelpResponse
 
 interface YelpAPIRepository : BaseRemoteRepository {
 
-    suspend fun getBusinessesByQuery(locationName: String, categories: String, offset: Int):
-            CommunicationResult<YelpResponse>
+    suspend fun getBusinessesByQuery(
+        locationName: String,
+        categories: String,
+        offset: Int,
+        locale: String
+    ): CommunicationResult<YelpResponse>
 
     fun convertBusinessDTOToBusiness(businessDTO: BusinessDTO): Business
     fun cacheBusiness(business: Business)

@@ -6,10 +6,14 @@ import androidx.compose.runtime.setValue
 import cz.mendelu.pef.flashyflashcards.R
 import cz.mendelu.pef.flashyflashcards.architecture.BaseViewModel
 import cz.mendelu.pef.flashyflashcards.architecture.CommunicationResult
+import cz.mendelu.pef.flashyflashcards.datastore.DataStoreRepository
+import cz.mendelu.pef.flashyflashcards.model.AppPreferenceConstants
 import cz.mendelu.pef.flashyflashcards.model.UiState
 import cz.mendelu.pef.flashyflashcards.model.Business
 import cz.mendelu.pef.flashyflashcards.model.BusinessCategory
 import cz.mendelu.pef.flashyflashcards.model.Pagination
+import cz.mendelu.pef.flashyflashcards.remote.CS_LOCALE
+import cz.mendelu.pef.flashyflashcards.remote.EN_LOCALE
 import cz.mendelu.pef.flashyflashcards.remote.INVALID_LATLNG
 import cz.mendelu.pef.flashyflashcards.remote.MAX_OFFSET
 import cz.mendelu.pef.flashyflashcards.remote.YelpAPIRepository
@@ -20,12 +24,29 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExploreScreenViewModel @Inject constructor(
-    private val yelpAPIRepository: YelpAPIRepository
+    private val yelpAPIRepository: YelpAPIRepository,
+    private val dataStoreRepository: DataStoreRepository
 ) : BaseViewModel(), ExploreScreenActions {
 
     var screenData by mutableStateOf(ExploreScreenData())
     var uiState by mutableStateOf(UiState<MutableList<Business>, ScreenErrors>())
     private var pagination = Pagination()
+    private var searchLocale = EN_LOCALE
+
+    init {
+        launch {
+            dataStoreRepository.getAppPreferences().collect { preferences ->
+                val language = preferences
+                    .find { it.name == AppPreferenceConstants.LANG }
+                    ?.value
+                
+                searchLocale = when (language) {
+                    AppPreferenceConstants.LANG_CS -> CS_LOCALE
+                    else -> EN_LOCALE
+                }
+            }
+        }
+    }
 
     override fun getBusinessCategoryDisplayNames(): List<Int> {
         // Don't change the order of list elements
@@ -80,7 +101,8 @@ class ExploreScreenViewModel @Inject constructor(
             val result = yelpAPIRepository.getBusinessesByQuery(
                 screenData.name,
                 screenData.businessCategory.alias,
-                offset
+                offset,
+                searchLocale
             )
 
             when (result) {

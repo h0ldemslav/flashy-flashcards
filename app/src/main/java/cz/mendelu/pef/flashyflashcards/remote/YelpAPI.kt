@@ -5,6 +5,8 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+const val EN_LOCALE = "en_US"
+const val CS_LOCALE = "cs_CZ"
 const val MAX_OFFSET = 1000
 
 interface YelpAPI {
@@ -13,6 +15,7 @@ interface YelpAPI {
     suspend fun getBusinessesByQuery(
         @Query("location") locationName: String,
         @Query("categories") categories: List<String>,
-        @Query("offset") offset: Int
+        @Query("offset") offset: Int,
+        @Query("locale") locale: String
     ): Response<YelpResponse>
 }

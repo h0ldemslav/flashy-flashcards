@@ -19,14 +19,20 @@ class YelpAPIRepositoryImpl @Inject constructor(
     override suspend fun getBusinessesByQuery(
         locationName: String,
         categories: String,
-        offset: Int
+        offset: Int,
+        locale: String
     ): CommunicationResult<YelpResponse> {
         lastCachedBusiness = null
 
         val categoriesList = categories.split(", ")
 
         return withContext(Dispatchers.IO) {
-            processResponse(yelpAPI.getBusinessesByQuery(locationName, categoriesList, offset))
+            processResponse(yelpAPI.getBusinessesByQuery(
+                locationName,
+                categoriesList,
+                offset,
+                locale
+            ))
         }
     }
 
