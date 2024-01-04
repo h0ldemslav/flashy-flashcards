@@ -4,6 +4,7 @@ import cz.mendelu.pef.flashyflashcards.model.Business
 
 interface ExploreScreenActions {
 
+    fun getBusinessCategoryDisplayNames(): List<Int>
     fun updateScreenData(data: ExploreScreenData)
     fun searchPlaces()
     fun getAnotherPlaces()

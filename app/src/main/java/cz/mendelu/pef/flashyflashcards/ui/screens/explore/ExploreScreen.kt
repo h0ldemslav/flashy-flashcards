@@ -2,11 +2,12 @@ package cz.mendelu.pef.flashyflashcards.ui.screens.explore
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -113,7 +114,9 @@ fun ExploreScreenContent(
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val maxTextFieldCharacters = 256
-    val items = BusinessCategory.values().toList().map { it._name }
+    // Don't change the order of `dropDownItems`, because in `DropDownElement` indexes are used
+    // for updating category in screen data, see below
+    val dropDownItems = actions.getBusinessCategoryDisplayNames().map { stringResource(id = it) }
 
     val lazyListState: LazyListState = rememberLazyListState()
     val isAtBottom = lazyListState.isAtBottom()
@@ -128,7 +131,7 @@ fun ExploreScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(basicMargin()),
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(paddingValues)
             .padding(horizontal = basicMargin())
     ) {
@@ -156,15 +159,16 @@ fun ExploreScreenContent(
         )
 
         DropDownElement(
-            items = items,
-            selectedItem = screenData.businessCategory._name,
+            items = dropDownItems,
+            selectedItem = stringResource(id = screenData.businessCategory.displayName),
             label = stringResource(id = R.string.category_label),
             isExpanded = isExpanded,
             onExpandedChange = { isExpanded = it },
             onDismissRequest = { isExpanded = false }
-        ) {
-            screenData.businessCategory = BusinessCategory.getFromString(it)
-            actions.updateScreenData(screenData)
+        ) { index, _ ->
+            actions.updateScreenData(
+                screenData.copy(businessCategory = BusinessCategory.values()[index])
+            )
             isExpanded = false
         }
 
@@ -181,31 +185,40 @@ fun ExploreScreenContent(
         ) {
             Text(text = stringResource(id = R.string.search_label))
         }
-        
-        if (uiState.data != null) {
-            LazyColumn(state = lazyListState) {
-                uiState.data!!.forEach { business ->
-                    item {
-                        BusinessRow(business = business) {
-                            actions.cacheBusiness(business)
-                            navController.navigate(
-                                DetailScreenDestination(
-                                    dataSourceType = DataSourceType.Remote(business.remoteId)
-                                )
+
+        LazyColumn(state = lazyListState) {
+            uiState.data?.forEach { business ->
+                item {
+                    BusinessRow(business = business) {
+                        actions.cacheBusiness(business)
+                        navController.navigate(
+                            DetailScreenDestination(
+                                dataSourceType = DataSourceType.Remote(business.remoteId)
                             )
-                        }
+                        )
                     }
                 }
             }
-        } else if (uiState.errors != null) {
+
+            if (uiState.loading) {
+                item {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        LoadingScreenCircleIndicator(
+                            modifier = Modifier.padding(vertical = basicMargin())
+                        )
+                    }
+                }
+            }
+        }
+
+        if (uiState.errors != null) {
             PlaceholderElement(
                 imageRes = uiState.errors!!.imageRes,
                 textRes = uiState.errors!!.messageRes
             )
-        }
-
-        if (uiState.loading) {
-            LoadingScreenCircleIndicator(modifier = Modifier.padding(top = basicMargin()))
         }
     }
 }

@@ -1,22 +1,35 @@
 package cz.mendelu.pef.flashyflashcards.model
 
-enum class BusinessCategory(val _name: String, val alias: String) {
-    All(_name = "All", alias = "language_schools,libraries,culturalcenter,museums,galleries"),
-    LanguageSchools(_name = "Language Schools", alias = "language_schools"),
-    Libraries(_name = "Libraries", alias = "libraries"),
-    CulturalCenter(_name = "Cultural Center", alias = "culturalcenter"),
-    Museums(_name = "Museums", alias = "museums"),
-    ArtGalleries(_name = "Art Galleries", alias = "galleries");
+import androidx.annotation.StringRes
+import cz.mendelu.pef.flashyflashcards.R
 
-    companion object {
-        fun getFromString(str: String): BusinessCategory {
-            BusinessCategory.values().forEach {
-                if (it._name == str) {
-                    return it
-                }
-            }
-
-            return All
-        }
-    }
+enum class BusinessCategory(
+    @StringRes
+    val displayName: Int,
+    val alias: String
+) {
+    All(
+        displayName = R.string.all_categories,
+        alias = "language_schools,libraries,culturalcenter,museums,galleries"
+    ),
+    LanguageSchools(
+        displayName = R.string.language_schools_category,
+        alias = "language_schools"
+    ),
+    Libraries(
+        displayName = R.string.libraries_category,
+        alias = "libraries"
+    ),
+    CulturalCenter(
+        displayName = R.string.cultural_centers_category,
+        alias = "culturalcenter"
+    ),
+    Museums(
+        displayName = R.string.museums_category,
+        alias = "museums"
+    ),
+    ArtGalleries(
+        displayName = R.string.art_galleries_category,
+        alias = "galleries"
+    )
 }

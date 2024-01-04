@@ -23,7 +23,7 @@ fun DropDownElement(
     isExpanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     onDismissRequest: () -> Unit,
-    onDropDownMenuItemClick: (String) -> Unit
+    onDropDownMenuItemClick: (Int, String) -> Unit
 ) {
     ExposedDropdownMenuBox(
         expanded = isExpanded,
@@ -60,13 +60,13 @@ fun DropDownElement(
             expanded = isExpanded,
             onDismissRequest = onDismissRequest
         ) {
-            items.forEach { item ->
+            items.forEachIndexed { index, item ->
                 DropdownMenuItem(
                     text = {
-                           Text(text = item)
+                       Text(text = item)
                     },
                     onClick = {
-                        onDropDownMenuItemClick(item)
+                        onDropDownMenuItemClick(index, item)
                     }
                 )
             }

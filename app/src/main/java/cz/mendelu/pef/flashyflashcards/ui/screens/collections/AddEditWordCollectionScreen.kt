@@ -155,8 +155,8 @@ fun AddEditWordCollectionScreenContent(
                 isExpanded = isSourceLanguageExpanded,
                 onExpandedChange = { isSourceLanguageExpanded = it },
                 onDismissRequest = { isSourceLanguageExpanded = false },
-                onDropDownMenuItemClick = {
-                    uiState.data!!.sourceLanguage = it
+                onDropDownMenuItemClick = { _, item ->
+                    uiState.data!!.sourceLanguage = item
                     actions.setWordCollection(uiState.data!!)
 
                     isSourceLanguageExpanded = false
@@ -175,8 +175,8 @@ fun AddEditWordCollectionScreenContent(
                 isExpanded = isTargetLanguageExpanded,
                 onExpandedChange = { isTargetLanguageExpanded = it },
                 onDismissRequest = { isTargetLanguageExpanded = false },
-                onDropDownMenuItemClick = {
-                    uiState.data!!.targetLanguage = it
+                onDropDownMenuItemClick = { _, item ->
+                    uiState.data!!.targetLanguage = item
                     actions.setWordCollection(uiState.data!!)
 
                     isTargetLanguageExpanded = false

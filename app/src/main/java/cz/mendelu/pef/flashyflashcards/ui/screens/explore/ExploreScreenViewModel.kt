@@ -8,6 +8,7 @@ import cz.mendelu.pef.flashyflashcards.architecture.BaseViewModel
 import cz.mendelu.pef.flashyflashcards.architecture.CommunicationResult
 import cz.mendelu.pef.flashyflashcards.model.UiState
 import cz.mendelu.pef.flashyflashcards.model.Business
+import cz.mendelu.pef.flashyflashcards.model.BusinessCategory
 import cz.mendelu.pef.flashyflashcards.model.Pagination
 import cz.mendelu.pef.flashyflashcards.remote.INVALID_LATLNG
 import cz.mendelu.pef.flashyflashcards.remote.MAX_OFFSET
@@ -25,6 +26,11 @@ class ExploreScreenViewModel @Inject constructor(
     var screenData by mutableStateOf(ExploreScreenData())
     var uiState by mutableStateOf(UiState<MutableList<Business>, ScreenErrors>())
     private var pagination = Pagination()
+
+    override fun getBusinessCategoryDisplayNames(): List<Int> {
+        // Don't change the order of list elements
+        return BusinessCategory.values().map { it.displayName }
+    }
 
     override fun updateScreenData(data: ExploreScreenData) {
         screenData = ExploreScreenData(
