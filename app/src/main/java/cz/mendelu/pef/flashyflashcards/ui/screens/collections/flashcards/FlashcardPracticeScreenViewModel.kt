@@ -7,7 +7,6 @@ import cz.mendelu.pef.flashyflashcards.R
 import cz.mendelu.pef.flashyflashcards.architecture.BaseViewModel
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.TestHistoryRepository
 import cz.mendelu.pef.flashyflashcards.database.wordcollections.WordCollectionsRepository
-import cz.mendelu.pef.flashyflashcards.extensions.getTitleCase
 import cz.mendelu.pef.flashyflashcards.model.FlashcardAnswer
 import cz.mendelu.pef.flashyflashcards.model.TestHistory
 import cz.mendelu.pef.flashyflashcards.model.UiState
@@ -67,11 +66,11 @@ class FlashcardPracticeScreenViewModel @Inject constructor(
     override fun isAnswerCorrect(answer: String): Boolean {
         uiState.data?.let { data ->
             val processedAnswer = answer
-                .getTitleCase()
+                .lowercase()
                 .trim()
 
             val correctAnswer = data.words[data.currentWordNumber].translation
-                .getTitleCase()
+                .lowercase()
                 .trim()
 
             data.error = if (processedAnswer != correctAnswer) {
@@ -167,16 +166,10 @@ class FlashcardPracticeScreenViewModel @Inject constructor(
         testHistory?.let { history ->
             history.timeTaken += timeTaken
 
-            // This is needed in order to compare correctness of the user's answer
-            flashcardAnswer.answer = flashcardAnswer.answer
-                .getTitleCase()
-                .trim()
-            flashcardAnswer.word.name = flashcardAnswer.word.name
-                .getTitleCase()
-                .trim()
-            flashcardAnswer.word.translation = flashcardAnswer.word.translation
-                .getTitleCase()
-                .trim()
+            if (flashcardAnswer.answer.trim().lowercase() == flashcardAnswer.word.translation.trim().lowercase()) {
+                history.numberOfCorrectAnswers += 1
+            }
+
             history.answers.add(flashcardAnswer)
         }
     }

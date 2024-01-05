@@ -46,6 +46,7 @@ import cz.mendelu.pef.flashyflashcards.ui.elements.Flashcard
 import cz.mendelu.pef.flashyflashcards.ui.elements.PlaceholderElement
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
+import cz.mendelu.pef.flashyflashcards.ui.theme.halfMargin
 import cz.mendelu.pef.flashyflashcards.ui.theme.mediumMargin
 import cz.mendelu.pef.flashyflashcards.ui.theme.smallMargin
 import cz.mendelu.pef.flashyflashcards.utils.DateUtils
@@ -278,7 +279,7 @@ fun FlashcardPracticeResult(
         horizontalArrangement = Arrangement.spacedBy(basicMargin()),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = mediumMargin())
+            .padding(horizontal = halfMargin())
     ) {
         Button(
             onClick = {
@@ -311,9 +312,7 @@ fun FlashcardPracticeResult(
 fun TestSummary(
     testHistory: TestHistory
 ) {
-    val correctAnswers = testHistory.answers.count {
-        it.answer == it.word.translation
-    }
+    val correctAnswers = testHistory.numberOfCorrectAnswers
     val allAnswers = testHistory.answers.count()
 
     Column(
@@ -343,7 +342,7 @@ fun TestSummary(
 fun TestSummaryColumn(
     answer: FlashcardAnswer
 ) {
-    val isAnswerCorrect = answer.answer == answer.word.translation
+    val isAnswerCorrect = answer.answer.trim().lowercase() == answer.word.translation.trim().lowercase()
     val answerColor = if (isAnswerCorrect) Color.Green else Color.Red
     val answerIcon = if (isAnswerCorrect) Icons.Default.Done else Icons.Default.Close
 
@@ -360,7 +359,7 @@ fun TestSummaryColumn(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "${stringResource(id = R.string.your_answer)}: ${answer.answer}",
+                text = "${stringResource(id = R.string.your_answer)}: ${answer.answer.trim()}",
                 color = answerColor
             )
 

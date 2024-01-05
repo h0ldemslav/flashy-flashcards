@@ -23,6 +23,7 @@ import cz.mendelu.pef.flashyflashcards.model.TestHistory
 data class TestHistoryEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Long? = null,
+    var numberOfCorrectAnswers: Int,
     var answers: List<FlashcardAnswer>,
     var dateOfCompletion: Long,
     var timeTaken: Long,
@@ -33,6 +34,7 @@ data class TestHistoryEntity(
         fun createFromTestHistory(testHistory: TestHistory): TestHistoryEntity {
             return TestHistoryEntity(
                 id = testHistory.id,
+                numberOfCorrectAnswers = testHistory.numberOfCorrectAnswers,
                 answers = testHistory.answers.toList(),
                 dateOfCompletion = testHistory.dateOfCompletion,
                 timeTaken = testHistory.timeTaken,
