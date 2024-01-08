@@ -33,16 +33,14 @@ class WordsScreenViewModel @Inject constructor(
             wordCollectionsRepository.getWordCollectionAndWordsById(wordCollectionId)
                 .collect { entity ->
                     if (entity != null) {
-                        mlKitTranslateManager.setSourceAndTargetLanguages(
+                        mlKitTranslateManager.setSourceAndTargetLanguageCodes(
                             entity.wordCollectionEntity.sourceLanguage,
                             entity.wordCollectionEntity.targetLanguage
                         )
 
                         val data = entity.wordEntities.map { Word.createFromWordEntity(it) }
 
-                        uiState = UiState(
-                            data = data,
-                        )
+                        uiState = UiState(data = data)
                     }
             }
         }

@@ -124,7 +124,7 @@ fun AddEditWordCollectionScreenContent(
     }
 
     val languages = actions.getAllLanguages()
-    val languagesFullNames = languages.keys.toList()
+    val languagesFullNames = languages.values.toList()
 
     if (uiState.data != null) {
         Column(

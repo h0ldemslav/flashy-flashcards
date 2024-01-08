@@ -64,7 +64,7 @@
     <string name="words_translation_error">Translation must not be empty</string>
     <string name="failed_to_translate_word">Failed to translate, try again</string>
     <string name="failed_to_download_language_model">Failed to download translator, try again</string>
-    <string name="translate_note">NOTE: To translate a word with MLKit, you must download the translator (Wi-Fi is required).</string>
+    <string name="translate_note">NOTE: To translate a word using MLKit, you need to download the languages (Wi-Fi required). You can manage them in the settings.</string>
     <string name="training_label">Training</string>
     <string name="answer_label">Answer</string>
     <string name="next_label">Next</string>
@@ -109,4 +109,6 @@
     <string name="museums_category">Museums</string>
     <string name="art_galleries_category">Art Galleries</string>
     <string name="failed_to_refresh_business_try_again">Failed to refresh data, try again later</string>
+    <string name="translation_languages">Languages</string>
+    <string name="downloaded_languages">Downloaded languages</string>
 </resources>

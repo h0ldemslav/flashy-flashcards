@@ -39,6 +39,7 @@ fun BookmarksScreen(
 ) {
     BasicScaffold(
         topAppBarTitle = stringResource(id = R.string.bookmarks),
+        showLoading = viewModel.uiState.loading,
         onBackClick = { navController.popBackStack() },
         bottomAppBar = {
             BottomBar(navController = navController)

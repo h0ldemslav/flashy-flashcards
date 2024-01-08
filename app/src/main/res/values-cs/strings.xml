@@ -65,7 +65,7 @@
     <string name="words_translation_error">Překlad nesmí být prázdný</string>
     <string name="failed_to_translate_word">Nepodařilo se přeložit, zkuste to znovu</string>
     <string name="failed_to_download_language_model">Nepodařilo se stáhnout překladač, zkuste to znovu</string>
-    <string name="translate_note">POZNÁMKA: Chcete-li přeložit slovo pomocí MLKit, musíte si stáhnout překladač (je vyžadována Wi-Fi).</string>
+    <string name="translate_note">POZNÁMKA: Chcete-li přeložit slovo pomocí MLKit, musíte si stáhnout jazyky (vyžaduje se Wi-Fi). Můžete je spravovat v nastavení</string>
     <string name="training_label">Trénink</string>
     <string name="answer_label">Odpověď</string>
     <string name="next_label">Další</string>
@@ -110,4 +110,6 @@
     <string name="museums_category">Muzea</string>
     <string name="art_galleries_category">Galerie</string>
     <string name="failed_to_refresh_business_try_again">Nepodařilo se obnovit data, zkuste to později</string>
+    <string name="translation_languages">Jazyky</string>
+    <string name="downloaded_languages">Uložené jazyky</string>
 </resources>

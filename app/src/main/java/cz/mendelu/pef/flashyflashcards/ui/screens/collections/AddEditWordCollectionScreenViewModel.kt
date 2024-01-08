@@ -30,21 +30,22 @@ class AddEditWordCollectionScreenViewModel @Inject constructor(
     ))
 
     override fun saveWordCollection(wordCollection: WordCollection) {
-        val oldSourceAndTargetLanguages = mLKitTranslateManager.getSourceAndTargetLanguages()
+        val (sourceLanguageCode, targetLanguageCode) = mLKitTranslateManager.getCurrentSourceAndTargetLanguageCodes()
+        val languages = mLKitTranslateManager.getSourceAndTargetLanguageNames(sourceLanguageCode, targetLanguageCode)
 
-        if (oldSourceAndTargetLanguages.first != wordCollection.sourceLanguage ||
-            oldSourceAndTargetLanguages.second != wordCollection.targetLanguage) {
+        if (wordCollection.sourceLanguage != languages?.first ||
+            wordCollection.targetLanguage != languages.second) {
                 // User can change collection languages
                 // Release translator in order to download model, when user attempts to translate
                 // word according to fresh languages
                 mLKitTranslateManager.closeTranslator()
                 mLKitTranslateManager.resetTranslator()
-        }
 
-        mLKitTranslateManager.setSourceAndTargetLanguages(
-            wordCollection.sourceLanguage,
-            wordCollection.targetLanguage
-        )
+                mLKitTranslateManager.setSourceAndTargetLanguageCodes(
+                    wordCollection.sourceLanguage,
+                    wordCollection.targetLanguage
+                )
+        }
 
         launch {
             if (wordCollection.id != null) {
@@ -90,7 +91,7 @@ class AddEditWordCollectionScreenViewModel @Inject constructor(
     }
 
     override fun getAllLanguages(): Map<String, String> {
-        return mLKitTranslateManager.getMapOfAvailableLanguages()
+        return mLKitTranslateManager.getAllAvailableCodesToLanguages()
     }
 
     override fun setWordCollection(wordCollection: WordCollection?) {

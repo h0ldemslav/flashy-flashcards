@@ -2,7 +2,9 @@ package cz.mendelu.pef.flashyflashcards.mlkit
 
 import android.util.Log
 import com.google.mlkit.common.model.DownloadConditions
+import com.google.mlkit.common.model.RemoteModelManager
 import com.google.mlkit.nl.translate.TranslateLanguage
+import com.google.mlkit.nl.translate.TranslateRemoteModel
 import com.google.mlkit.nl.translate.Translation
 import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
@@ -10,30 +12,30 @@ import cz.mendelu.pef.flashyflashcards.extensions.getTitleCase
 import java.lang.IllegalArgumentException
 import java.lang.NullPointerException
 
-class TranslateSourceTargetLanguagesException(message: String): Exception(message)
+class LanguageCodesException(message: String): Exception(message)
 
 class MLKitTranslateManager {
 
-    private var languages: Map<String, String> = mapOf()
-    private var sourceLang: String? = null
-    private var targetLang: String? = null
+    private var codesToLanguages: Map<String, String> = mapOf()
+    private var sourceLanguageCode: String? = null
+    private var targetLanguageCode: String? = null
     private var translator: Translator? = null
 
     init {
-        createMapOfAvailableLanguages()
+        setCodesToLanguages()
     }
 
     fun setTranslator(
         onDownloadSuccess: (() -> Unit)?,
         onDownloadFailure: (() -> Unit)?
     ) {
-        if (sourceLang == null || targetLang == null) {
-            throw TranslateSourceTargetLanguagesException("Source and target languages cannot be null.")
+        if (sourceLanguageCode == null || targetLanguageCode == null) {
+            throw LanguageCodesException("Source and target language codes cannot be null")
         }
 
         val options = TranslatorOptions.Builder()
-            .setSourceLanguage(sourceLang!!)
-            .setTargetLanguage(targetLang!!)
+            .setSourceLanguage(sourceLanguageCode!!)
+            .setTargetLanguage(targetLanguageCode!!)
             .build()
 
         translator = Translation.getClient(options)
@@ -83,6 +85,54 @@ class MLKitTranslateManager {
         }
     }
 
+    fun getDownloadedCodesToLanguages(
+        onDownloadSuccess: (Map<String, String>) -> Unit,
+        onDownloadFailure: (Exception) -> Unit
+    ) {
+        val modelManager = RemoteModelManager.getInstance()
+
+        modelManager.getDownloadedModels(TranslateRemoteModel::class.java)
+            .addOnSuccessListener { models ->
+                val downloadedCodesToLanguages = mutableMapOf<String, String>()
+
+                models.forEach {
+                    val languageCode = it.language
+                    val languageFullName = codesToLanguages[languageCode]
+
+                    // English is a built-in model and you cannot delete it
+                    if (languageFullName != null && languageCode != TranslateLanguage.ENGLISH) {
+                        downloadedCodesToLanguages[languageCode] = languageFullName
+                    }
+                }
+
+                onDownloadSuccess(downloadedCodesToLanguages.toMap())
+            }
+            .addOnFailureListener { exception ->
+                onDownloadFailure(exception)
+            }
+    }
+
+    fun deleteTranslateModel(
+        code: String,
+        onSuccessDelete: () -> Unit,
+        onFailureDelete: (Exception) -> Unit
+    ) {
+        val isLanguageCodeValid = codesToLanguages.keys.contains(code)
+
+        if (isLanguageCodeValid) {
+            val modelManager = RemoteModelManager.getInstance()
+            val model = TranslateRemoteModel.Builder(code).build()
+
+            modelManager.deleteDownloadedModel(model)
+                .addOnSuccessListener {
+                    onSuccessDelete()
+                }
+                .addOnFailureListener { exception ->
+                    onFailureDelete(exception)
+                }
+        }
+    }
+
     /**
     * Closes the translator and releases its resources.
     */
@@ -94,22 +144,31 @@ class MLKitTranslateManager {
         return translator == null
     }
 
-    fun setSourceAndTargetLanguages(source: String, target: String) {
-        sourceLang = languages[source]
-        targetLang = languages[target]
+    fun setSourceAndTargetLanguageCodes(sourceLanguage: String?, targetLanguage: String?) {
+        sourceLanguageCode = codesToLanguages.keys.find { codesToLanguages[it] == sourceLanguage }
+        targetLanguageCode = codesToLanguages.keys.find { codesToLanguages[it] == targetLanguage }
     }
 
-    fun getSourceAndTargetLanguages(): Pair<String?, String?> {
-        return Pair(sourceLang, targetLang)
+    fun getCurrentSourceAndTargetLanguageCodes(): Pair<String?, String?> {
+        return Pair(sourceLanguageCode, targetLanguageCode)
     }
 
-    fun getMapOfAvailableLanguages(): Map<String, String> {
-        return languages
+    fun getSourceAndTargetLanguageNames(
+        sourceCode: String?,
+        targetCode: String?
+    ): Pair<String, String>? {
+        if (sourceCode == null || targetCode == null) return null
+
+        return Pair(codesToLanguages[sourceCode]!!, codesToLanguages[targetCode]!!)
     }
 
-    private fun createMapOfAvailableLanguages() {
+    fun getAllAvailableCodesToLanguages(): Map<String, String> {
+        return codesToLanguages
+    }
+
+    private fun setCodesToLanguages() {
         val languageCodes = TranslateLanguage.getAllLanguages()
-        val fullNamesAndCodes = mutableMapOf<String, String>()
+        val codesToFullNames = mutableMapOf<String, String>()
         val members = TranslateLanguage::class.java.fields
 
         members.forEach { field ->
@@ -119,7 +178,7 @@ class MLKitTranslateManager {
 
                 if (languageCodes.contains(fieldValue)) {
                     if (fieldValue != null) {
-                        fullNamesAndCodes[fieldName] = fieldValue.toString()
+                        codesToFullNames[fieldValue.toString()] = fieldName
                     }
                 }
             } catch (e: IllegalAccessException) {
@@ -135,6 +194,6 @@ class MLKitTranslateManager {
             }
         }
 
-        languages = fullNamesAndCodes.toMap()
+        codesToLanguages = codesToFullNames.toMap()
     }
 }

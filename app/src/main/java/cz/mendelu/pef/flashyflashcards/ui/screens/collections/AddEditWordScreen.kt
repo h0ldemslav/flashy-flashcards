@@ -68,10 +68,13 @@ fun AddEditWordScreen(
         },
         actions = {
             if (viewModel.uiState.data?.id != null) {
-                IconButton(onClick = {
-                    viewModel.deleteWord(viewModel.uiState.data!!)
-                    navController.popBackStack()
-                }) {
+                IconButton(
+                    enabled = !viewModel.uiState.loading,
+                    onClick = {
+                        viewModel.deleteWord(viewModel.uiState.data!!)
+                        navController.popBackStack()
+                    }
+                ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(id = R.string.delete_label)
@@ -163,6 +166,7 @@ fun AddEditWordScreenContent(
                 }
 
                 Button(
+                    enabled = !uiState.loading,
                     onClick = {
                         val isWordValid = actions.isWordValid(uiState.data!!)
 

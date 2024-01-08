@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.navigate
 import cz.mendelu.pef.flashyflashcards.BuildConfig
 import cz.mendelu.pef.flashyflashcards.R
 import cz.mendelu.pef.flashyflashcards.model.AppPreference
@@ -43,6 +44,7 @@ import cz.mendelu.pef.flashyflashcards.ui.elements.BasicScaffold
 import cz.mendelu.pef.flashyflashcards.ui.elements.ListRow
 import cz.mendelu.pef.flashyflashcards.ui.elements.PlaceholderElement
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
+import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.TranslationLanguagesScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
 import cz.mendelu.pef.flashyflashcards.ui.theme.halfMargin
 
@@ -62,6 +64,7 @@ fun SettingsScreen(
     ) { paddingValues ->
         SettingsScreenContent(
             paddingValues = paddingValues,
+            navController = navController,
             uiState = viewModel.uiState,
             actions = viewModel
         )
@@ -71,6 +74,7 @@ fun SettingsScreen(
 @Composable
 fun SettingsScreenContent(
     paddingValues: PaddingValues,
+    navController: NavController,
     uiState: UiState<List<AppPreference>, ScreenErrors>,
     actions: SettingsScreenActions
 ) {
@@ -96,6 +100,16 @@ fun SettingsScreenContent(
                     currentPreference = appPreference
                 }
             }
+
+            Text(
+                text = stringResource(id = R.string.downloaded_languages),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = basicMargin())
+                    .clickable {
+                        navController.navigate(TranslationLanguagesScreenDestination)
+                    }
+            )
 
             Text(
                 text = stringResource(id = R.string.application_version) + ": $appVersionName",
