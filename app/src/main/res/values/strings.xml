@@ -111,4 +111,6 @@
     <string name="failed_to_refresh_business_try_again">Failed to refresh data, try again later</string>
     <string name="translation_languages">Languages</string>
     <string name="downloaded_languages">Downloaded languages</string>
+    <string name="failed_to_get_downloaded_languages">Failed to load downloaded languages, try again.</string>
+    <string name="failed_to_delete_downloaded_language">Failed to delete language, try again</string>
 </resources>

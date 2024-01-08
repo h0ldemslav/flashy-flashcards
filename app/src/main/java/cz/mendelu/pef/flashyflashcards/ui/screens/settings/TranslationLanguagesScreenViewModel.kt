@@ -3,6 +3,7 @@ package cz.mendelu.pef.flashyflashcards.ui.screens.settings
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import cz.mendelu.pef.flashyflashcards.R
 import cz.mendelu.pef.flashyflashcards.architecture.BaseViewModel
 import cz.mendelu.pef.flashyflashcards.mlkit.MLKitTranslateManager
 import cz.mendelu.pef.flashyflashcards.model.UiState
@@ -18,7 +19,7 @@ class TranslationLanguagesScreenViewModel @Inject constructor(
     var uiState by mutableStateOf(UiState<Map<String, String>, ScreenErrors>(loading = true))
 
     init {
-        getAllCollectionLanguages()
+        getAllDownloadedLanguageCodesToNames()
     }
 
     fun deleteTranslationModel(code: String) {
@@ -37,18 +38,28 @@ class TranslationLanguagesScreenViewModel @Inject constructor(
                 uiState = UiState(data = newData)
             },
             onFailureDelete = {
-                // TODO
+                uiState = UiState(
+                    data = oldData,
+                    errors = ScreenErrors(
+                        messageRes = R.string.failed_to_delete_downloaded_language
+                    )
+                )
             }
         )
     }
 
-    private fun getAllCollectionLanguages() {
+    private fun getAllDownloadedLanguageCodesToNames() {
         mLKitTranslateManager.getDownloadedCodesToLanguages(
             onDownloadSuccess = {
                 uiState = UiState(data = it)
             },
             onDownloadFailure = {
-                // TODO
+                uiState = UiState(
+                    errors = ScreenErrors(
+                        imageRes = R.drawable.undraw_warning,
+                        messageRes = R.string.failed_to_get_downloaded_languages
+                    )
+                )
             }
         )
     }

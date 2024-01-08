@@ -1,5 +1,6 @@
 package cz.mendelu.pef.flashyflashcards.ui.screens.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -49,6 +51,8 @@ fun TranslationLanguagesScreenContent(
     uiState: UiState<Map<String, String>, ScreenErrors>,
     onListRowIconClick: (String) -> Unit
 ) {
+    val context = LocalContext.current
+
     if (uiState.data?.isNotEmpty() == true) {
         LazyColumn(
             modifier = Modifier
@@ -69,6 +73,14 @@ fun TranslationLanguagesScreenContent(
                     )
                 }
             }
+        }
+
+        if (uiState.errors?.messageRes == R.string.failed_to_delete_downloaded_language) {
+            Toast.makeText(
+                context,
+                context.getString(uiState.errors!!.messageRes),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     } else {
         PlaceholderElement(
