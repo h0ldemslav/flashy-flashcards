@@ -1,6 +1,7 @@
 package cz.mendelu.pef.flashyflashcards.mlkit
 
 import android.util.Log
+import com.google.mlkit.common.MlKitException
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.common.model.RemoteModelManager
 import com.google.mlkit.nl.translate.TranslateLanguage
@@ -80,7 +81,19 @@ class MLKitTranslateManager {
                     onSuccessTranslate(translatedText)
                 }
                 .addOnFailureListener { exception ->
-                    onFailureTranslate(exception)
+                    // Download required model, if it's not on a device
+                    if (exception is MlKitException && exception.errorCode == MlKitException.NOT_FOUND) {
+                        setTranslator(
+                            onDownloadSuccess = {
+                                translate(text, onSuccessTranslate, onFailureTranslate)
+                            },
+                            onDownloadFailure = {
+                                onFailureTranslate(exception)
+                            }
+                        )
+                    } else {
+                        onFailureTranslate(exception)
+                    }
                 }
         }
     }

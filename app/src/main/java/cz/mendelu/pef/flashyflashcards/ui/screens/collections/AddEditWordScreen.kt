@@ -103,7 +103,7 @@ fun AddEditWordScreenContent(
 ) {
     if (uiState.data != null) {
         // MLKit failed
-        if (uiState.errors != null) {
+        if (uiState.errors?.messageRes != null) {
             Toast.makeText(
                 context,
                 context.getString(uiState.errors!!.messageRes),
