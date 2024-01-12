@@ -15,6 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropDownElement(
+    textFieldModifier: Modifier = Modifier,
+    exposedDropDownModifier: Modifier = Modifier,
     items: List<String>,
     selectedItem: String,
     label: String,
@@ -54,11 +56,13 @@ fun DropDownElement(
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor()
+                .then(textFieldModifier)
         )
 
         ExposedDropdownMenu(
             expanded = isExpanded,
-            onDismissRequest = onDismissRequest
+            onDismissRequest = onDismissRequest,
+            modifier = exposedDropDownModifier
         ) {
             items.forEachIndexed { index, item ->
                 DropdownMenuItem(

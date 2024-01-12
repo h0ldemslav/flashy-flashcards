@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun BasicTextFieldElement(
+    modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
@@ -43,6 +44,8 @@ fun BasicTextFieldElement(
                 onDone()
             }
         }),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier)
     )
 }

@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -39,6 +40,13 @@ import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
 import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.WordCollectionsScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.WordsScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
+
+const val TestTagCollectionNameTextField = "TestTagCollectionNameTextField"
+const val TestTagCollectionSourceLanguageTextField = "TestTagCollectionSourceLanguageTextField"
+const val TestTagCollectionSourceLanguageDropdown = "TestTagCollectionSourceLanguageDropdown"
+const val TestTagCollectionTargetLanguageTextField = "TestTagCollectionTargetLanguageTextField"
+const val TestTagCollectionTargetLanguageDropdown = "TestTagCollectionTargetLanguageDropdown"
+const val TestTagCollectionSaveButton = "TestTagCollectionSaveButton"
 
 @CollectionsNavGraph
 @Destination
@@ -136,6 +144,7 @@ fun AddEditWordCollectionScreenContent(
                 .padding(basicMargin())
         ) {
             BasicTextFieldElement(
+                modifier = Modifier.testTag(TestTagCollectionNameTextField),
                 value = uiState.data!!.name,
                 onValueChange = {
                     uiState.data!!.name = it
@@ -149,6 +158,8 @@ fun AddEditWordCollectionScreenContent(
             )
 
             DropDownElement(
+                textFieldModifier = Modifier.testTag(TestTagCollectionSourceLanguageTextField),
+                exposedDropDownModifier = Modifier.testTag(TestTagCollectionSourceLanguageDropdown),
                 items = languagesFullNames,
                 selectedItem = uiState.data!!.sourceLanguage,
                 label = stringResource(id = R.string.source_language_label),
@@ -164,6 +175,8 @@ fun AddEditWordCollectionScreenContent(
             )
 
             DropDownElement(
+                textFieldModifier = Modifier.testTag(TestTagCollectionTargetLanguageTextField),
+                exposedDropDownModifier = Modifier.testTag(TestTagCollectionTargetLanguageDropdown),
                 items = languagesFullNames,
                 selectedItem = uiState.data!!.targetLanguage,
                 label = stringResource(id = R.string.target_language_label),
@@ -195,7 +208,9 @@ fun AddEditWordCollectionScreenContent(
                         navController.popBackStack()
                     }
                 },
-                modifier = Modifier.padding(top = basicMargin())
+                modifier = Modifier
+                    .padding(top = basicMargin())
+                    .testTag(TestTagCollectionSaveButton)
             ) {
                 Text(text = stringResource(id = R.string.save_label))
             }

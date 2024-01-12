@@ -1,10 +1,11 @@
 package cz.mendelu.pef.flashyflashcards.di
 
-import cz.mendelu.pef.flashyflashcards.FlashyFlashcardsApplication
+import android.content.Context
 import cz.mendelu.pef.flashyflashcards.database.FlashyFlashcardsDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -14,6 +15,6 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(): FlashyFlashcardsDatabase =
-        FlashyFlashcardsDatabase.getDatabase(FlashyFlashcardsApplication.appContext)
+    fun provideDatabase(@ApplicationContext appContext: Context): FlashyFlashcardsDatabase =
+        FlashyFlashcardsDatabase.getDatabase(appContext)
 }

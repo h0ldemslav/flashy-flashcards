@@ -9,6 +9,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -27,6 +28,9 @@ import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.AddEditWordCollec
 import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.WordsScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
 
+const val TestTagCollectionsLazyColumn = "TestTagCollectionsLazyColumn"
+const val TestTagAddCollectionButton = "TestTagAddCollectionButton"
+
 @CollectionsNavGraph(start = true)
 @Destination
 @Composable
@@ -41,11 +45,14 @@ fun WordCollectionsScreen(
         },
         showLoading = viewModel.uiState.loading,
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                navController.navigate(
-                    AddEditWordCollectionScreenDestination(wordCollectionId = null)
-                )
-            }) {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(
+                        AddEditWordCollectionScreenDestination(wordCollectionId = null)
+                    )
+                },
+                modifier = Modifier.testTag(TestTagAddCollectionButton)
+            ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = stringResource(id = R.string.add_label)
@@ -79,6 +86,7 @@ fun WordCollectionsScreenContent(
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(horizontal = basicMargin())
+                .testTag(TestTagCollectionsLazyColumn)
         ) {
             uiState.data!!.forEach { col ->
                 item {
