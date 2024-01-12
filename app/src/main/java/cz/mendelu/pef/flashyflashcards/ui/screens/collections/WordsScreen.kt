@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,6 +47,8 @@ import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.AddEditWordScreen
 import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.FlashcardPracticeScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.TestHistoryScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
+
+const val TestTageCollectionEditButton = "TestTageCollectionEditButton"
 
 @CollectionsNavGraph
 @Destination
@@ -102,11 +105,14 @@ fun WordsScreen(
             }
         },
         actions = {
-            IconButton(onClick = {
-                navController.navigate(
-                    AddEditWordCollectionScreenDestination(wordCollectionId = collectionId)
-                )
-            }) {
+            IconButton(
+                onClick = {
+                    navController.navigate(
+                        AddEditWordCollectionScreenDestination(wordCollectionId = collectionId)
+                    )
+                },
+                modifier = Modifier.testTag(TestTageCollectionEditButton)
+            ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = stringResource(id = R.string.edit_label)

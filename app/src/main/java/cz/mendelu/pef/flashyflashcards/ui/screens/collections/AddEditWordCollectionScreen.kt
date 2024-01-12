@@ -47,6 +47,7 @@ const val TestTagCollectionSourceLanguageDropdown = "TestTagCollectionSourceLang
 const val TestTagCollectionTargetLanguageTextField = "TestTagCollectionTargetLanguageTextField"
 const val TestTagCollectionTargetLanguageDropdown = "TestTagCollectionTargetLanguageDropdown"
 const val TestTagCollectionSaveButton = "TestTagCollectionSaveButton"
+const val TestTagCollectionDeleteButton = "TestTagCollectionDeleteButton"
 
 @CollectionsNavGraph
 @Destination
@@ -77,9 +78,12 @@ fun AddEditWordCollectionScreen(
         onBackClick = { navController.popBackStack() },
         actions = {
             if (wordCollectionId != null) {
-                IconButton(onClick = {
-                    isRemoveCollectionDialogOpened = true
-                }) {
+                IconButton(
+                    onClick = {
+                        isRemoveCollectionDialogOpened = true
+                    },
+                    modifier = Modifier.testTag(TestTagCollectionDeleteButton)
+                ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(id = R.string.delete_label)
