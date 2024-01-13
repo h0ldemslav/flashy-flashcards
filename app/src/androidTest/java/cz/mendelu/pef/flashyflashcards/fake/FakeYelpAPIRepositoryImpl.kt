@@ -12,6 +12,7 @@ import cz.mendelu.pef.flashyflashcards.remote.YelpAPIRepository
 
 class FakeYelpAPIRepositoryImpl : YelpAPIRepository {
 
+    private var cachedBusiness: Business? = null
     private val fakeSuccessResponse = CommunicationResult.Success(YelpResponse(
         total = 0,
         region = Region(null),
@@ -111,10 +112,16 @@ class FakeYelpAPIRepositoryImpl : YelpAPIRepository {
     }
 
     override fun cacheBusiness(business: Business) {
-
+        cachedBusiness = business
     }
 
     override fun getCachedBusiness(): Business? {
-        return null
+        if (cachedBusiness == null) {
+            val index = (0..2).random()
+
+           cachedBusiness = convertBusinessDTOToBusiness(fakeSuccessResponse.data.businesses[index])
+        }
+
+        return cachedBusiness
     }
 }

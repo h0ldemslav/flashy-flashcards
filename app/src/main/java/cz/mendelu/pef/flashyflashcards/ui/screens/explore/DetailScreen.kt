@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -70,6 +71,8 @@ import cz.mendelu.pef.flashyflashcards.utils.GpsUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+const val TestTagDetailMap = "TestTagDetailMap"
 
 @ExploreNavGraph
 @Destination
@@ -161,7 +164,8 @@ fun DetailScreenContent(
         ) {
             DetailScreenGoogleMap(
                 businessLocation = LatLng(uiState.data!!.latitude, uiState.data!!.longitude),
-                userLocation = userLocation
+                userLocation = userLocation,
+                modifier = Modifier.testTag(TestTagDetailMap)
             )
 
             Text(
@@ -225,6 +229,7 @@ fun DetailScreenContent(
 
 @Composable
 fun DetailScreenGoogleMap(
+    modifier: Modifier = Modifier,
     businessLocation: LatLng,
     userLocation: LatLng?,
     cameraZoom: Float = 10f
@@ -255,6 +260,7 @@ fun DetailScreenGoogleMap(
             .height(450.dp)
             .padding(top = 25.dp)
             .padding(bottom = 5.dp)
+            .then(modifier)
     ) {
         GoogleMap(
             uiSettings = mapUiSettings,
