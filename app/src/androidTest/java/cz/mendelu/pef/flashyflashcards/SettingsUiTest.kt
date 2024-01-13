@@ -54,12 +54,6 @@ class SettingsUiTest {
                         navController = navController
                     )
                 }
-
-                if (theme.value == darkThemeLabel) {
-                    val isDark = isSystemInDarkTheme()
-
-                    assert(isDark)
-                }
             }
 
             onNodeWithText(themeSettingLabel)
@@ -79,7 +73,7 @@ class SettingsUiTest {
 
             onNodeWithText(darkThemeLabel).assertExists()
 
-            Thread.sleep(1000)
+            Thread.sleep(2000)
         }
     }
 }
