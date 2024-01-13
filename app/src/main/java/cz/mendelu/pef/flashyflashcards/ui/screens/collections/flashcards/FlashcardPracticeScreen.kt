@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,6 +51,12 @@ import cz.mendelu.pef.flashyflashcards.ui.theme.halfMargin
 import cz.mendelu.pef.flashyflashcards.ui.theme.mediumMargin
 import cz.mendelu.pef.flashyflashcards.ui.theme.smallMargin
 import cz.mendelu.pef.flashyflashcards.utils.DateUtils
+
+const val TestTagFlashcard = "TestTagFlashcard"
+const val TestTagAnswerTextField = "TestTagAnswerTextField"
+const val TestTagNextFlashcardButton = "TestTagNextFlashcardButton"
+const val TestTagResultTitle = "TestTagResultTitle"
+const val TestTagTestHistory = "TestTagTestHistory"
 
 @CollectionsNavGraph
 @Destination
@@ -237,7 +244,10 @@ fun FlashcardPractice(
     actions: FlashcardPracticeScreenActions,
     onActionButtonClick: () -> Unit
 ) {
-    Flashcard(text = data.flashcardText) {
+    Flashcard(
+        text = data.flashcardText,
+        modifier = Modifier.testTag(TestTagFlashcard)
+    ) {
         if (allowFlashcardHint) {
             actions.setFlashcardText()
         }
@@ -251,12 +261,16 @@ fun FlashcardPractice(
         label = stringResource(id = R.string.answer_label),
         supportingText = textFieldSupportingText,
         enabled = textFieldEnabled,
-        errorMessage = textFieldError
+        errorMessage = textFieldError,
+        modifier = Modifier.testTag(TestTagAnswerTextField)
     )
 
-    ElevatedButton(onClick = {
-        onActionButtonClick()
-    }) {
+    ElevatedButton(
+        onClick = {
+            onActionButtonClick()
+        },
+        modifier = Modifier.testTag(TestTagNextFlashcardButton)
+    ) {
         Text(text = stringResource(id = R.string.next_label))
     }
 }
@@ -271,7 +285,8 @@ fun FlashcardPracticeResult(
         color = MaterialTheme.colorScheme.primary,
         text = title.uppercase(),
         style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.testTag(TestTagResultTitle)
     )
 
     Row(
@@ -304,19 +319,25 @@ fun FlashcardPracticeResult(
     }
 
     if (testHistory != null) {
-        TestSummary(testHistory = testHistory)
+        TestSummary(
+            modifier = Modifier.testTag(TestTagTestHistory),
+            testHistory = testHistory
+        )
     }
 }
 
 @Composable
 fun TestSummary(
+    modifier: Modifier = Modifier,
     testHistory: TestHistory
 ) {
     val correctAnswers = testHistory.numberOfCorrectAnswers
     val allAnswers = testHistory.answers.count()
 
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier)
     ) {
         Text(text = "${stringResource(id = R.string.number_of_correct_answers)}: ${correctAnswers}/${allAnswers}")
         Text(text = "${stringResource(id = R.string.date_of_completion)}: ${DateUtils.getDateString(testHistory.dateOfCompletion)}")

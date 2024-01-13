@@ -50,6 +50,9 @@ import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
 
 const val TestTagCollectionEditButton = "TestTagCollectionEditButton"
 const val TestTagAddWordButton = "TestTagAddWordButton"
+const val TestTagTrainingMode = "TestTagTrainingMode"
+const val TestTagTestMode = "TestTagTestMode"
+const val TestTagCollectionsMoreActions = "TestTagCollectionsMoreActions"
 
 @CollectionsNavGraph
 @Destination
@@ -123,23 +126,29 @@ fun WordsScreen(
                 )
             }
 
-            IconButton(onClick = {
-                navController.navigate(
-                    FlashcardPracticeScreenDestination(
-                        collectionId = collectionId,
-                        flashcardPracticeType = FlashcardPracticeType.Training
-                    )
-                )
-            }) {
+            IconButton(
+                onClick = {
+                    navController.navigate(
+                            FlashcardPracticeScreenDestination(
+                                collectionId = collectionId,
+                                flashcardPracticeType = FlashcardPracticeType.Training
+                            )
+                        )
+                },
+                modifier = Modifier.testTag(TestTagTrainingMode)
+            ) {
                 Icon(
                     imageVector = Icons.Default.Quiz,
                     contentDescription = stringResource(id = R.string.training_label)
                 )
             }
 
-            IconButton(onClick = {
-                popupMenuExpanded = true
-            }) {
+            IconButton(
+                onClick = {
+                    popupMenuExpanded = true
+                },
+                modifier = Modifier.testTag(TestTagCollectionsMoreActions)
+            ) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = stringResource(id = R.string.more_label)
@@ -181,7 +190,8 @@ fun WordsScreen(
                                     )
                                 )
                             )
-                        }
+                        },
+                        modifier = Modifier.testTag(TestTagTestMode)
                     )
 
                     DropdownMenuItem(

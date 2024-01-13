@@ -19,6 +19,7 @@ import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
 
 @Composable
 fun Flashcard(
+    modifier: Modifier = Modifier,
     text: String,
     height: Int = 156,
     onCardClick: () -> Unit
@@ -35,6 +36,7 @@ fun Flashcard(
             .clickable {
                 onCardClick()
             }
+            .then(modifier)
     ) {
         Text(
             text = modifiedText,
