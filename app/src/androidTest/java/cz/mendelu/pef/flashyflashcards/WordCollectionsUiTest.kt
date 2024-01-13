@@ -1,6 +1,7 @@
 package cz.mendelu.pef.flashyflashcards
 
 import androidx.activity.compose.setContent
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onNodeWithTag
@@ -14,6 +15,7 @@ import cz.mendelu.pef.flashyflashcards.navigation.DestinationsNavHostWrapper
 import cz.mendelu.pef.flashyflashcards.ui.activities.MainActivity
 import cz.mendelu.pef.flashyflashcards.ui.screens.NavGraphs
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagAddCollectionButton
+import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagAddWordButton
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionDeleteButton
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionNameTextField
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionSaveButton
@@ -22,7 +24,10 @@ import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionS
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionTargetLanguageDropdown
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionTargetLanguageTextField
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionsLazyColumn
-import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTageCollectionEditButton
+import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionEditButton
+import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagSaveWordButton
+import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagWordNameTextField
+import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagWordTranslationTextField
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
@@ -81,7 +86,7 @@ class WordCollectionsUiTest {
                 .performClick()
             waitForIdle()
 
-            onNodeWithTag(TestTageCollectionEditButton).performClick()
+            onNodeWithTag(TestTagCollectionEditButton).performClick()
             waitForIdle()
 
             val newName = "Sports"
@@ -111,7 +116,7 @@ class WordCollectionsUiTest {
                 .performClick()
             waitForIdle()
 
-            onNodeWithTag(TestTageCollectionEditButton).performClick()
+            onNodeWithTag(TestTagCollectionEditButton).performClick()
             waitForIdle()
 
             onNodeWithTag(TestTagCollectionDeleteButton).performClick()
@@ -137,6 +142,79 @@ class WordCollectionsUiTest {
 
             val errorMessage = composeTestRule.activity.getString(R.string.word_collections_collection_error)
             onNodeWithText(errorMessage).assertExists()
+
+            Thread.sleep(1000)
+        }
+    }
+
+    @Test
+    fun testAddWordsInCollection() {
+        val name = "Sporty"
+        addCollectionWithName(name)
+
+        with(composeTestRule) {
+            waitForIdle()
+
+            onNodeWithText(name).performClick()
+            waitForIdle()
+
+            val words: Map<String, String> = mapOf(
+                "Hokej" to "Hockey",
+                "Fotbal" to "Football",
+                "Volejbal" to "Volleyball"
+            )
+
+            words.forEach { (name, translation) ->
+                onNodeWithTag(TestTagAddWordButton).performClick()
+                waitForIdle()
+
+                addWord(name, translation)
+                waitForIdle()
+            }
+
+            Thread.sleep(1000)
+        }
+    }
+
+    @Test
+    fun testAddWordWithEmptyName() {
+        val name = "Web"
+        addCollectionWithName(name)
+
+        with(composeTestRule) {
+            waitForIdle()
+
+            onNodeWithText(name).performClick()
+            waitForIdle()
+
+            onNodeWithTag(TestTagAddWordButton).performClick()
+
+            addWord("", "CSS property")
+
+            val nameError = composeTestRule.activity.getString(R.string.words_name_error)
+            onNodeWithText(nameError).assertIsDisplayed()
+
+            Thread.sleep(1000)
+        }
+    }
+
+    @Test
+    fun testAddWordWithEmptyTranslation() {
+        val name = "Serialy"
+        addCollectionWithName(name)
+
+        with(composeTestRule) {
+            waitForIdle()
+
+            onNodeWithText(name).performClick()
+            waitForIdle()
+
+            onNodeWithTag(TestTagAddWordButton).performClick()
+
+            addWord("Hra o truny", "")
+
+            val translationError = composeTestRule.activity.getString(R.string.words_translation_error)
+            onNodeWithText(translationError).assertIsDisplayed()
 
             Thread.sleep(1000)
         }
@@ -169,6 +247,24 @@ class WordCollectionsUiTest {
                 .performClick()
 
             saveButton.performClick()
+        }
+    }
+
+    private fun addWord(name: String = "Word", translation: String = "Translation") {
+        with(composeTestRule) {
+            val wordNameTextField = onNodeWithTag(TestTagWordNameTextField)
+            val wordTranslationTextField = onNodeWithTag(TestTagWordTranslationTextField)
+            val saveWordButton = onNodeWithTag(TestTagSaveWordButton)
+
+            wordNameTextField
+                .assertIsDisplayed()
+                .performTextInput(name)
+            wordTranslationTextField
+                .assertIsDisplayed()
+                .performTextInput(translation)
+            saveWordButton
+                .assertIsDisplayed()
+                .performClick()
         }
     }
 }

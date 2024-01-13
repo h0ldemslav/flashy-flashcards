@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -38,6 +39,10 @@ import cz.mendelu.pef.flashyflashcards.ui.elements.PlaceholderElement
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
 import cz.mendelu.pef.flashyflashcards.ui.theme.halfMargin
+
+const val TestTagWordNameTextField = "TestTagWordNameTextField"
+const val TestTagWordTranslationTextField = "TestTagWordTranslationTextField"
+const val TestTagSaveWordButton = "TestTagSaveWordButton"
 
 @CollectionsNavGraph
 @Destination
@@ -129,7 +134,8 @@ fun AddEditWordScreenContent(
                 errorMessage = if (uiState.errors?.messageRes == R.string.words_name_error)
                     stringResource(id = uiState.errors!!.messageRes)
                 else
-                    null
+                    null,
+                modifier = Modifier.testTag(TestTagWordNameTextField)
             )
 
             BasicTextFieldElement(
@@ -142,7 +148,8 @@ fun AddEditWordScreenContent(
                 errorMessage = if (uiState.errors?.messageRes == R.string.words_translation_error)
                     stringResource(id = uiState.errors!!.messageRes)
                 else
-                    null
+                    null,
+                modifier = Modifier.testTag(TestTagWordTranslationTextField)
             )
 
             Row(
@@ -175,7 +182,9 @@ fun AddEditWordScreenContent(
                             navController.popBackStack()
                         }
                     },
-                    modifier = Modifier.weight(0.4f)
+                    modifier = Modifier
+                        .weight(0.4f)
+                        .testTag(TestTagSaveWordButton)
                 ) {
                     Text(text = stringResource(id = R.string.save_label))
                 }

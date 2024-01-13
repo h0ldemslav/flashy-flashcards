@@ -48,7 +48,8 @@ import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.FlashcardPractice
 import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.TestHistoryScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
 
-const val TestTageCollectionEditButton = "TestTageCollectionEditButton"
+const val TestTagCollectionEditButton = "TestTagCollectionEditButton"
+const val TestTagAddWordButton = "TestTagAddWordButton"
 
 @CollectionsNavGraph
 @Destination
@@ -90,14 +91,17 @@ fun WordsScreen(
             navController.popBackStack()
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                navController.navigate(
-                    AddEditWordScreenDestination(
-                        collectionId = collectionId,
-                        word = null
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(
+                        AddEditWordScreenDestination(
+                            collectionId = collectionId,
+                            word = null
+                        )
                     )
-                )
-            }) {
+                },
+                modifier = Modifier.testTag(TestTagAddWordButton)
+            ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = stringResource(id = R.string.add_label)
@@ -111,7 +115,7 @@ fun WordsScreen(
                         AddEditWordCollectionScreenDestination(wordCollectionId = collectionId)
                     )
                 },
-                modifier = Modifier.testTag(TestTageCollectionEditButton)
+                modifier = Modifier.testTag(TestTagCollectionEditButton)
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
