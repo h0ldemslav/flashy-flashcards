@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -65,6 +66,10 @@ import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.DetailScreenDesti
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
 import cz.mendelu.pef.flashyflashcards.ui.theme.halfMargin
 import cz.mendelu.pef.flashyflashcards.ui.theme.smallMargin
+
+const val TestTagNameTextField = "TestTagNameTextField"
+const val TestTagSearchButton = "TestTagSearchButton"
+const val TestTagSearchResultsList = "TestTagSearchResultsList"
 
 @ExploreNavGraph(start = true)
 @Destination
@@ -155,7 +160,8 @@ fun ExploreScreenContent(
             onDone = {
                 keyboardController?.hide()
                 focusManager.clearFocus()
-            }
+            },
+            modifier = Modifier.testTag(TestTagNameTextField)
         )
 
         DropDownElement(
@@ -182,11 +188,15 @@ fun ExploreScreenContent(
             modifier = Modifier
                 .padding(top = basicMargin())
                 .padding(bottom = halfMargin())
+                .testTag(TestTagSearchButton)
         ) {
             Text(text = stringResource(id = R.string.search_label))
         }
 
-        LazyColumn(state = lazyListState) {
+        LazyColumn(
+            state = lazyListState,
+            modifier = Modifier.testTag(TestTagSearchResultsList)
+        ) {
             uiState.data?.forEach { business ->
                 item {
                     BusinessRow(business = business) {
