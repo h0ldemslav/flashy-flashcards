@@ -43,6 +43,7 @@ import cz.mendelu.pef.flashyflashcards.ui.theme.halfMargin
 const val TestTagWordNameTextField = "TestTagWordNameTextField"
 const val TestTagWordTranslationTextField = "TestTagWordTranslationTextField"
 const val TestTagSaveWordButton = "TestTagSaveWordButton"
+const val TestTagDeleteWordButton = "TestTagDeleteWordButton"
 
 @CollectionsNavGraph
 @Destination
@@ -78,7 +79,8 @@ fun AddEditWordScreen(
                     onClick = {
                         viewModel.deleteWord(viewModel.uiState.data!!)
                         navController.popBackStack()
-                    }
+                    },
+                    modifier = Modifier.testTag(TestTagDeleteWordButton)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,

@@ -25,6 +25,7 @@ import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionT
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionTargetLanguageTextField
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionsLazyColumn
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionEditButton
+import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagDeleteWordButton
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagSaveWordButton
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagWordNameTextField
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagWordTranslationTextField
@@ -172,6 +173,65 @@ class WordCollectionsUiTest {
 
             Thread.sleep(1000)
         }
+    }
+
+    @Test
+    fun testAddAndUpdateWordInCollection() {
+        val name = "Esporty"
+        addCollectionWithName(name)
+
+        with(composeTestRule) {
+            waitForIdle()
+
+            onNodeWithText(name).performClick()
+            waitForIdle()
+
+            val word = Pair("Nejcennejsi hrac", "Most valuable player")
+            val newTranslation = "MVP (most valuable player)"
+
+            onNodeWithTag(TestTagAddWordButton).performClick()
+            waitForIdle()
+
+            addWord(word.first, word.second)
+            waitForIdle()
+
+            onNodeWithText(word.first).performClick()
+            val wordNameTextField = onNodeWithTag(TestTagWordTranslationTextField)
+            wordNameTextField.performTextClearance()
+            wordNameTextField.performTextInput(newTranslation)
+
+            onNodeWithTag(TestTagSaveWordButton).performClick()
+            waitForIdle()
+
+            Thread.sleep(2000)
+        }
+    }
+
+    @Test
+    fun testAddAndDeleteWordFromCollection() {
+        val name = "Serialy, filmy"
+        addCollectionWithName(name)
+
+        with(composeTestRule) {
+            waitForIdle()
+
+            onNodeWithText(name).performClick()
+            waitForIdle()
+
+            val word = Pair("Herec", "Actor")
+
+            onNodeWithTag(TestTagAddWordButton).performClick()
+            waitForIdle()
+
+            addWord(word.first, word.second)
+            waitForIdle()
+
+            onNodeWithText(word.first).performClick()
+            onNodeWithTag(TestTagDeleteWordButton).performClick()
+            waitForIdle()
+        }
+
+        Thread.sleep(1000)
     }
 
     @Test
