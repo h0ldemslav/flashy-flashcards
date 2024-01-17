@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -28,6 +29,8 @@ import cz.mendelu.pef.flashyflashcards.ui.elements.BasicScaffold
 import cz.mendelu.pef.flashyflashcards.ui.elements.PlaceholderElement
 import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
+
+const val TestTagTestHistoryDetailDeleteButton = "TestTagTestHistoryDetailDeleteButton"
 
 @CollectionsNavGraph
 @Destination
@@ -51,9 +54,12 @@ fun TestHistoryDetailScreen(
         showLoading = viewModel.uiState.loading,
         actions = {
             if (viewModel.uiState.data != null) {
-                IconButton(onClick = {
-                    isRemoveTestHistoryDialogOpened = true
-                }) {
+                IconButton(
+                    onClick = {
+                        isRemoveTestHistoryDialogOpened = true
+                    },
+                    modifier = Modifier.testTag(TestTagTestHistoryDetailDeleteButton)
+                ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(id = R.string.delete_label)
@@ -73,7 +79,8 @@ fun TestHistoryDetailScreen(
                 body = stringResource(id = R.string.test_history_dialog_content),
                 onDismissRequest = {
                     isRemoveTestHistoryDialogOpened = false
-                }) {
+                }
+            ) {
                     isRemoveTestHistoryDialogOpened = false
 
                     viewModel.deleteTestHistory()
@@ -95,7 +102,10 @@ fun TestHistoryDetailScreenContent(
             .padding(horizontal = basicMargin())
     ) {
         if (uiState.data != null) {
-            TestSummary(testHistory = uiState.data!!)
+            TestSummary(
+                testHistory = uiState.data!!,
+                modifier = Modifier.testTag(TestTagTestSummary)
+            )
         } else if (uiState.errors != null) {
             PlaceholderElement(
                 imageRes = uiState.errors!!.imageRes,

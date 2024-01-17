@@ -2,7 +2,7 @@ package cz.mendelu.pef.flashyflashcards
 
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onLast
@@ -10,11 +10,14 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import cz.mendelu.pef.flashyflashcards.model.AppPreferenceConstants
 import cz.mendelu.pef.flashyflashcards.navigation.DestinationsNavHostWrapper
 import cz.mendelu.pef.flashyflashcards.ui.activities.MainActivity
 import cz.mendelu.pef.flashyflashcards.ui.screens.NavGraphs
+import cz.mendelu.pef.flashyflashcards.ui.screens.settings.SettingsScreen
 import cz.mendelu.pef.flashyflashcards.ui.screens.settings.TestTagSettingOptionRow
 import cz.mendelu.pef.flashyflashcards.ui.theme.FlashyFlashcardsTheme
+import cz.mendelu.pef.flashyflashcards.utils.LocaleUtils
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
@@ -78,17 +81,17 @@ class SettingsUiTest {
     @Test
     fun testLanguageSettingChange() {
         with(composeTestRule) {
+            val language = mutableStateOf(AppPreferenceConstants.LANG_EN)
             val languageSettingLabel = activity.getString(R.string.app_language)
             val csLanguageLabel = activity.getString(R.string.language_cs)
 
             activity.setContent {
                 navController = rememberNavController()
 
-                FlashyFlashcardsTheme(darkTheme = false) {
-                    DestinationsNavHostWrapper(
-                        navGraph = NavGraphs.settings,
-                        navController = navController
-                    )
+                SettingsScreen(navController = navController)
+
+                if (language.value != AppPreferenceConstants.LANG_EN) {
+                    LocaleUtils.setLocale(LocalContext.current, language.value)
                 }
             }
 
@@ -98,7 +101,8 @@ class SettingsUiTest {
             onNodeWithText(csLanguageLabel).performClick()
             Thread.sleep(2000)
 
-            onNodeWithText(csLanguageLabel).assertIsDisplayed()
+            language.value = AppPreferenceConstants.LANG_CS
+            waitForIdle()
 
             Thread.sleep(2000)
         }

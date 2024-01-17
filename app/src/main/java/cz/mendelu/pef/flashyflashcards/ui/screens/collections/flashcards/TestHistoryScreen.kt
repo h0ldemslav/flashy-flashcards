@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -24,6 +25,8 @@ import cz.mendelu.pef.flashyflashcards.ui.screens.ScreenErrors
 import cz.mendelu.pef.flashyflashcards.ui.screens.destinations.TestHistoryDetailScreenDestination
 import cz.mendelu.pef.flashyflashcards.ui.theme.basicMargin
 import cz.mendelu.pef.flashyflashcards.utils.DateUtils
+
+const val TestTagTestHistoryRecordsList = "TestTagTestHistoryRecordsList"
 
 @CollectionsNavGraph
 @Destination
@@ -65,6 +68,7 @@ fun TestHistoryScreenContent(
                 .fillMaxWidth()
                 .padding(paddingValues)
                 .padding(horizontal = basicMargin())
+                .testTag(TestTagTestHistoryRecordsList)
         ) {
             uiState.data!!.forEachIndexed { index, history ->
                 item {

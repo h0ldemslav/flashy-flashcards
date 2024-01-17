@@ -12,6 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import cz.mendelu.pef.flashyflashcards.navigation.DestinationsNavHostWrapper
 import cz.mendelu.pef.flashyflashcards.ui.activities.MainActivity
+import cz.mendelu.pef.flashyflashcards.ui.elements.TestTagBackButton
 import cz.mendelu.pef.flashyflashcards.ui.screens.NavGraphs
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagAddCollectionButton
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagAddWordButton
@@ -23,6 +24,7 @@ import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionT
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionTargetLanguageTextField
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagCollectionsMoreActions
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagSaveWordButton
+import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagTestHistory
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagTestMode
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagTrainingMode
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.TestTagWordNameTextField
@@ -31,7 +33,10 @@ import cz.mendelu.pef.flashyflashcards.ui.screens.collections.flashcards.TestTag
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.flashcards.TestTagFlashcard
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.flashcards.TestTagNextFlashcardButton
 import cz.mendelu.pef.flashyflashcards.ui.screens.collections.flashcards.TestTagResultTitle
-import cz.mendelu.pef.flashyflashcards.ui.screens.collections.flashcards.TestTagTestHistory
+import cz.mendelu.pef.flashyflashcards.ui.screens.collections.flashcards.TestTagSaveTestHistoryButton
+import cz.mendelu.pef.flashyflashcards.ui.screens.collections.flashcards.TestTagTestHistoryDetailDeleteButton
+import cz.mendelu.pef.flashyflashcards.ui.screens.collections.flashcards.TestTagTestHistoryRecordsList
+import cz.mendelu.pef.flashyflashcards.ui.screens.collections.flashcards.TestTagTestSummary
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
@@ -144,9 +149,68 @@ class FlashcardsUiTest {
             onNodeWithTag(TestTagAnswerTextField).performTextInput(word.second)
             onNodeWithTag(TestTagNextFlashcardButton).performClick()
 
-            onNodeWithTag(TestTagTestHistory).assertExists()
+            onNodeWithTag(TestTagTestSummary).assertExists()
 
             Thread.sleep(1000)
+        }
+    }
+
+    @Test
+    fun testTestHistoryDetail() {
+        val name = "Pravo"
+        addCollectionWithName(name)
+
+        with(composeTestRule) {
+            waitForIdle()
+
+            onNodeWithText(name).performClick()
+            waitForIdle()
+
+            val word: Pair<String, String> = Pair("Zakon", "Law")
+
+            onNodeWithTag(TestTagAddWordButton).performClick()
+            waitForIdle()
+
+            addWord(word.first, word.second)
+            waitForIdle()
+
+            onNodeWithTag(TestTagCollectionsMoreActions)
+                .assertIsDisplayed()
+                .performClick()
+
+            onNodeWithTag(TestTagTestMode).performClick()
+
+            onNodeWithTag(TestTagAnswerTextField).performTextInput(word.second)
+            onNodeWithTag(TestTagNextFlashcardButton).performClick()
+
+            onNodeWithTag(TestTagTestSummary).assertExists()
+
+            onNodeWithTag(TestTagSaveTestHistoryButton).performClick()
+            onNodeWithTag(TestTagBackButton).performClick()
+            waitForIdle()
+
+            onNodeWithTag(TestTagCollectionsMoreActions).performClick()
+            onNodeWithTag(TestTagTestHistory).performClick()
+            waitForIdle()
+
+            onNodeWithTag(TestTagTestHistoryRecordsList)
+                .assertExists()
+                .assertIsDisplayed()
+                .onChildAt(0)
+                .performClick()
+            waitForIdle()
+
+            onNodeWithTag(TestTagTestSummary)
+                .assertExists()
+                .assertIsDisplayed()
+
+            onNodeWithTag(TestTagTestHistoryDetailDeleteButton).performClick()
+
+            val removeDialogButton = composeTestRule.activity.getString(R.string.dialog_remove_label)
+            onNodeWithText(removeDialogButton).performClick()
+            waitForIdle()
+
+            Thread.sleep(2000)
         }
     }
 

@@ -13,8 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import cz.mendelu.pef.flashyflashcards.R
+
+const val TestTagBackButton = "TestTagBackButton"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,11 +36,14 @@ fun BasicScaffold(
                 title = { Text(text = topAppBarTitle) },
                 navigationIcon = {
                     if (onBackClick != null) {
-                        IconButton(onClick = onBackClick) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = stringResource(R.string.navigation_icon_back)
-                            )
+                        IconButton(
+                            onClick = onBackClick,
+                            modifier = Modifier.testTag(TestTagBackButton)
+                        ) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowBack,
+                                    contentDescription = stringResource(R.string.navigation_icon_back)
+                                )
                         }
                     }
                 },

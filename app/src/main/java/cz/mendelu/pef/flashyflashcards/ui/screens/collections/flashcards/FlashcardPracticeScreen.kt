@@ -56,7 +56,8 @@ const val TestTagFlashcard = "TestTagFlashcard"
 const val TestTagAnswerTextField = "TestTagAnswerTextField"
 const val TestTagNextFlashcardButton = "TestTagNextFlashcardButton"
 const val TestTagResultTitle = "TestTagResultTitle"
-const val TestTagTestHistory = "TestTagTestHistory"
+const val TestTagTestSummary = "TestTagTestSummary"
+const val TestTagSaveTestHistoryButton = "TestTagSaveTestHistoryButton"
 
 @CollectionsNavGraph
 @Destination
@@ -311,7 +312,9 @@ fun FlashcardPracticeResult(
                     actions.saveTestHistory()
                     actions.resetFlashcard()
                 },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(TestTagSaveTestHistoryButton)
             ) {
                 Text(text = stringResource(id = R.string.save_test_history_label))
             }
@@ -320,7 +323,7 @@ fun FlashcardPracticeResult(
 
     if (testHistory != null) {
         TestSummary(
-            modifier = Modifier.testTag(TestTagTestHistory),
+            modifier = Modifier.testTag(TestTagTestSummary),
             testHistory = testHistory
         )
     }

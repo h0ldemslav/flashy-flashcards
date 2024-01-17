@@ -53,6 +53,7 @@ const val TestTagAddWordButton = "TestTagAddWordButton"
 const val TestTagTrainingMode = "TestTagTrainingMode"
 const val TestTagTestMode = "TestTagTestMode"
 const val TestTagCollectionsMoreActions = "TestTagCollectionsMoreActions"
+const val TestTagTestHistory = "TestTagTestHistory"
 
 @CollectionsNavGraph
 @Destination
@@ -202,7 +203,8 @@ fun WordsScreen(
                             navController.navigate(
                                 TestHistoryScreenDestination(collectionId = collectionId)
                             )
-                        }
+                        },
+                        modifier = Modifier.testTag(TestTagTestHistory)
                     )
                 }
             }
