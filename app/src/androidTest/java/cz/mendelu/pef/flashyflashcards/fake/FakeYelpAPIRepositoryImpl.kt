@@ -13,7 +13,7 @@ import cz.mendelu.pef.flashyflashcards.remote.YelpAPIRepository
 class FakeYelpAPIRepositoryImpl : YelpAPIRepository {
 
     private var cachedBusiness: Business? = null
-    private val fakeSuccessResponse = CommunicationResult.Success(YelpResponse(
+    private var fakeResponse: YelpResponse = YelpResponse(
         total = 0,
         region = Region(null),
         businesses = listOf(
@@ -65,7 +65,13 @@ class FakeYelpAPIRepositoryImpl : YelpAPIRepository {
                 reviewCount = 0
             )
         )
-    ))
+    )
+    private var fakeResult: CommunicationResult<YelpResponse> =
+        CommunicationResult.Success(fakeResponse)
+
+    fun setFakeResult(result: CommunicationResult<YelpResponse>) {
+        fakeResult = result
+    }
 
     override suspend fun getBusinessesByQuery(
         locationName: String,
@@ -74,7 +80,7 @@ class FakeYelpAPIRepositoryImpl : YelpAPIRepository {
         locale: String
     ): CommunicationResult<YelpResponse> {
         // Workaround for not getting data twice (can happen because of lazycolumn isAtBottom extension)
-        if (offset > 0) {
+        if (fakeResult is CommunicationResult.Success && offset > 0) {
             return CommunicationResult.Success(
                 YelpResponse(
                     businesses = listOf(),
@@ -84,16 +90,22 @@ class FakeYelpAPIRepositoryImpl : YelpAPIRepository {
             )
         }
 
-        return fakeSuccessResponse
+        return fakeResult
     }
 
     override suspend fun getBusinessByRemoteID(
         remoteId: String,
         locale: String
     ): CommunicationResult<BusinessDTO> {
-        val index = (0..2).random()
+        if (fakeResult is CommunicationResult.Success) {
+            val index = (0..2).random()
 
-        return CommunicationResult.Success(fakeSuccessResponse.data.businesses[index])
+            return CommunicationResult.Success(fakeResponse.businesses[index])
+        }
+
+        return CommunicationResult.Exception(
+            Throwable("CommunicationResult must be Success or Error")
+        )
     }
 
     override fun convertBusinessDTOToBusiness(businessDTO: BusinessDTO): Business {
@@ -119,7 +131,7 @@ class FakeYelpAPIRepositoryImpl : YelpAPIRepository {
         if (cachedBusiness == null) {
             val index = (0..2).random()
 
-           cachedBusiness = convertBusinessDTOToBusiness(fakeSuccessResponse.data.businesses[index])
+           cachedBusiness = convertBusinessDTOToBusiness(fakeResponse.businesses[index])
         }
 
         return cachedBusiness

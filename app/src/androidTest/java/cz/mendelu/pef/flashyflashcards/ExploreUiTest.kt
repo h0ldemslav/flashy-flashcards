@@ -9,10 +9,12 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import cz.mendelu.pef.flashyflashcards.architecture.CommunicationError
+import cz.mendelu.pef.flashyflashcards.architecture.CommunicationResult
 import cz.mendelu.pef.flashyflashcards.datastore.DataStoreRepository
 import cz.mendelu.pef.flashyflashcards.fake.FakeYelpAPIRepositoryImpl
-import cz.mendelu.pef.flashyflashcards.remote.YelpAPIRepository
 import cz.mendelu.pef.flashyflashcards.ui.activities.MainActivity
+import cz.mendelu.pef.flashyflashcards.ui.elements.TestTagPlaceholder
 import cz.mendelu.pef.flashyflashcards.ui.screens.explore.ExploreScreen
 import cz.mendelu.pef.flashyflashcards.ui.screens.explore.ExploreScreenViewModel
 import cz.mendelu.pef.flashyflashcards.ui.screens.explore.TestTagNameTextField
@@ -29,7 +31,7 @@ import javax.inject.Inject
 class ExploreUiTest {
     @Inject
     lateinit var dataStoreRepository: DataStoreRepository
-    private lateinit var yelpAPIRepository: YelpAPIRepository
+    private lateinit var fakeYelpAPIRepositoryImpl: FakeYelpAPIRepositoryImpl
     private lateinit var navController: NavHostController
     private lateinit var viewModel: ExploreScreenViewModel
 
@@ -43,10 +45,10 @@ class ExploreUiTest {
     fun setup() {
         hiltRule.inject()
 
-        yelpAPIRepository = FakeYelpAPIRepositoryImpl()
+        fakeYelpAPIRepositoryImpl = FakeYelpAPIRepositoryImpl()
 
         viewModel = ExploreScreenViewModel(
-            yelpAPIRepository = yelpAPIRepository,
+            yelpAPIRepository = fakeYelpAPIRepositoryImpl,
             dataStoreRepository = dataStoreRepository
         )
 
@@ -64,9 +66,7 @@ class ExploreUiTest {
     @Test
     fun testDataFetch() {
         with(composeTestRule) {
-            onNodeWithTag(TestTagNameTextField).performTextInput("Brno")
-            onNodeWithTag(TestTagSearchButton).performClick()
-            waitForIdle()
+            performPlacesSearch("Brno")
 
             onNodeWithTag(TestTagSearchResultsList)
                 .assertExists()
@@ -79,11 +79,75 @@ class ExploreUiTest {
     @Test
     fun testFetchDataFetchWithInvalidInput() {
         with(composeTestRule) {
-            onNodeWithTag(TestTagNameTextField).performTextInput("")
-            onNodeWithTag(TestTagSearchButton).performClick()
+            performPlacesSearch("")
+
             onNodeWithText(composeTestRule.activity.getString(R.string.explore_screen_city_input_error)).assertIsDisplayed()
 
-            Thread.sleep(1000)
+            Thread.sleep(2000)
+        }
+    }
+
+    @Test
+    fun testNoConnectionPlaceholder() {
+        with(composeTestRule) {
+            fakeYelpAPIRepositoryImpl.setFakeResult(CommunicationResult.ConnectionError)
+
+            performPlacesSearch("Bratislava")
+
+            onNodeWithTag(TestTagPlaceholder)
+                .assertExists()
+                .assertIsDisplayed()
+
+            Thread.sleep(2000)
+        }
+    }
+
+    @Test
+    fun testNoFoundPlaceholder() {
+        with(composeTestRule) {
+            val notFoundMessage = composeTestRule.activity.getString(R.string.city_not_found)
+
+            fakeYelpAPIRepositoryImpl.setFakeResult(CommunicationResult.Error(
+                CommunicationError(
+                    code = 404,
+                    message = notFoundMessage
+                )
+            ))
+
+            performPlacesSearch("Praha")
+
+            onNodeWithTag(TestTagPlaceholder)
+                .assertExists()
+                .assertIsDisplayed()
+
+            Thread.sleep(2000)
+        }
+    }
+
+    @Test
+    fun testExceptionPlaceholder() {
+        with(composeTestRule) {
+            val unknownError = composeTestRule.activity.getString(R.string.unknown_error)
+
+            fakeYelpAPIRepositoryImpl.setFakeResult(CommunicationResult.Exception(
+                Throwable(unknownError))
+            )
+
+            performPlacesSearch("Stockholm")
+
+            onNodeWithTag(TestTagPlaceholder)
+                .assertExists()
+                .assertIsDisplayed()
+
+            Thread.sleep(2000)
+        }
+    }
+
+    private fun performPlacesSearch(cityName: String) {
+        with(composeTestRule) {
+            onNodeWithTag(TestTagNameTextField).performTextInput(cityName)
+            onNodeWithTag(TestTagSearchButton).performClick()
+            waitForIdle()
         }
     }
 }
