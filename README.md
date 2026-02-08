@@ -14,3 +14,16 @@ Technology:
 - MLKit Translation API
 - Yelp Fusion API
 - Automated UI and unit tests
+
+## Design of Selected Screens
+
+![onboarding](./app-figma-design/Onboarding.png)
+<br>
+
+![collections](./app-figma-design/Collections.png)
+<br>
+
+![training](./app-figma-design/Training.png)
+<br>
+
+![explore](./app-figma-design/Explore.png)
